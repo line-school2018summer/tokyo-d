@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/backend.iml" filepath="$PROJECT_DIR$/backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/line-sc.iml" filepath="$PROJECT_DIR$/.idea/modules/line-sc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/line-sc_main.iml" filepath="$PROJECT_DIR$/.idea/modules/line-sc_main.iml" group="line-sc" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/line-sc_test.iml" filepath="$PROJECT_DIR$/.idea/modules/line-sc_test.iml" group="line-sc" />
     </modules>
   </component>
 </project>
