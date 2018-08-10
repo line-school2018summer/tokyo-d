@@ -64,3 +64,4 @@ fabric.properties
 
 build/
 .gradle/
+.idea/
