@@ -18,7 +18,6 @@ apply plugin: 'kotlin-spring'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'idea'
 
 group = 'com.proelbtn'
 version = '0.0.1-SNAPSHOT'
@@ -35,12 +34,7 @@ compileTestKotlin {
 		jvmTarget = "1.8"
 	}
 }
-idea {
-    module {
-        outputDir file('build/classes/main')
-        testOutputDir file('build/classes/test')
-    }
-}
+
 if(project.convention.findPlugin(JavaPluginConvention)) {
     // Change the output directory for the main and test source sets back to the old path
     sourceSets.main.output.classesDir = new File(buildDir, "classes/main")
@@ -51,12 +45,18 @@ repositories {
 	mavenCentral()
 }
 
+repositories {
+    maven {
+        url  "https://dl.bintray.com/kotlin/exposed"
+    }
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
     compile('org.springframework.boot:spring-boot-starter-web')
-	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk10")
 	compile("org.jetbrains.kotlin:kotlin-reflect")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	compile("org.springframework.boot:spring-boot-devtools")
+	compile('org.jetbrains.exposed:exposed:0.10.4')
+	compile('com.h2database:h2:1.4.197')
 }

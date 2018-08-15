@@ -1,15 +1,15 @@
-package com.proelbtn.linesc.controller.SampleController
+package com.proelbtn.linesc.controller.PingController
 
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class SampleController {
+class PingController {
     @GetMapping(
-            value = ["/"],
+            value = ["/ping"],
             produces = [(MediaType.APPLICATION_JSON_UTF8_VALUE)]
     )
-    fun hello(): String {
-        return "{\"greeting\": \"Hello World!\"}"
+    fun ping(): String {
+        return "{\"status\": \"OK\"}"
     }
 }
