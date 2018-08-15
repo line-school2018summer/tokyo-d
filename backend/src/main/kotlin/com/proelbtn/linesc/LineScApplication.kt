@@ -12,10 +12,10 @@ import org.springframework.boot.runApplication
 class LineScApplication
 
 fun main(args: Array<String>) {
-    Database.connect("jdbc:h2:mem:test", driver = "org.h2.Driver")
+    Database.connect("jdbc:mysql://localhost:3306/line-sc", driver = "com.mysql.jdbc.Driver", user = "root", password = "lineschool")
 
     transaction {
-        create(GroupMessages, GroupRelations, Groups, PersonalMessages, PersonalRelations, Users)
+        create(UserGroupMessages, UserGroupRelations, UserGroups, UserMessages, UserRelations, Users)
     }
 
     runApplication<LineScApplication>(*args)

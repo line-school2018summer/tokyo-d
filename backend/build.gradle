@@ -58,5 +58,5 @@ dependencies {
 	compile("org.jetbrains.kotlin:kotlin-reflect")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.jetbrains.exposed:exposed:0.10.4')
-	compile('com.h2database:h2:1.4.197')
+	compile('mysql:mysql-connector-java:5.1.46')
 }
