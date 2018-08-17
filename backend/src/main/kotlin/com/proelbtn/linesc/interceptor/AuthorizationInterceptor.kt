@@ -1,6 +1,7 @@
 package com.proelbtn.linesc.interceptor
 
 import com.proelbtn.linesc.annotation.Authorization
+import org.joda.time.DateTime
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
@@ -20,9 +21,21 @@ class AuthorizationInterceptor: HandlerInterceptor{
                 if (auth.isNullOrEmpty() || !auth.startsWith("Bearer ")) flag = false
                 if (flag) {
                     val token = auth.substring("Bearer ".length)
-                    val user = jedis.get(token)
+                    val data = jedis.get(token)
 
-                    if (!user.isNullOrEmpty()) request.setAttribute("id", user)
+                    if (!data.isNullOrEmpty()) {
+                        val datas = data.split('|')
+                        val user = datas[0]
+                        val expiredAt = DateTime(datas[1])
+
+                        if (DateTime.now() < expiredAt) {
+                            request.setAttribute("id", user)
+                        }
+                        else {
+                            jedis.del(token)
+                            flag = false
+                        }
+                    }
                     else flag = false
                 }
             }
