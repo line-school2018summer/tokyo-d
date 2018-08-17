@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -26,6 +27,9 @@ class UsersController {
 
         val rsid = node.path("sid").asText()
         val rname = node.path("name").asText()
+        val rpass = node.path("pass").asText()
+
+        if (rsid.isNullOrEmpty() || rname.isNullOrEmpty() || rpass.isNullOrEmpty());
 
         transaction {
             val query = Users.select { Users.sid eq rsid }
@@ -36,6 +40,7 @@ class UsersController {
                     it[id] = UUID.randomUUID()
                     it[sid] = rsid
                     it[name] = rname
+                    it[pass] = BCrypt.hashpw(rpass, BCrypt.gensalt(8))
                     it[createdAt] = now
                     it[updatedAt] = now
                 }

@@ -11,7 +11,7 @@ services:
         image: adminer
         restart: always
         ports:
-            - 8080:8080
+            - 9000:8080
     kvs:
         image: redis:latest
         restart: always
@@ -23,4 +23,4 @@ services:
         environment:
             REDIS_HOSTS: kvs
         ports:
-            - 8081:8081
+            - 9001:8081
