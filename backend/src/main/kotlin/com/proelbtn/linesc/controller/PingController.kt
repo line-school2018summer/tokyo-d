@@ -1,4 +1,4 @@
-package com.proelbtn.linesc.controller.PingController
+package com.proelbtn.linesc.controller
 
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
