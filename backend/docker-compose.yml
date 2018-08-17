@@ -11,4 +11,16 @@ services:
         image: adminer
         restart: always
         ports:
-            - 9000:8080
+            - 8080:8080
+    kvs:
+        image: redis:latest
+        restart: always
+        ports:
+            - 6379:6379
+    commander:
+        image: rediscommander/redis-commander
+        restart: always
+        environment:
+            REDIS_HOSTS: kvs
+        ports:
+            - 8081:8081

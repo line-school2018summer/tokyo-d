@@ -59,4 +59,5 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.jetbrains.exposed:exposed:0.10.4')
 	compile('mysql:mysql-connector-java:5.1.46')
+	compile('redis.clients:jedis:2.9.0')
 }
