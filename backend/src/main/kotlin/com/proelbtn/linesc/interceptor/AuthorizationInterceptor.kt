@@ -21,22 +21,9 @@ class AuthorizationInterceptor: HandlerInterceptor{
                 if (auth.isNullOrEmpty() || !auth.startsWith("Bearer ")) flag = false
                 if (flag) {
                     val token = auth.substring("Bearer ".length)
-                    val data = jedis.get(token)
+                    val user = jedis.get(token)
 
-                    if (!data.isNullOrEmpty()) {
-                        val datas = data.split('|')
-                        val user = datas[0]
-                        val expiredAt = DateTime(datas[1])
-
-                        if (DateTime.now() < expiredAt) {
-                            request.setAttribute("id", user)
-                        }
-                        else {
-                            jedis.del(token)
-                            flag = false
-                        }
-                    }
-                    else flag = false
+                    flag = !user.isNullOrEmpty()
                 }
             }
         }

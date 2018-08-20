@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import redis.clients.jedis.Jedis
 import java.util.*
+import java.util.concurrent.ThreadLocalRandom
 
 @RestController
 class TokenController {
@@ -38,19 +39,20 @@ class TokenController {
                 val user = query.first()
                 if (BCrypt.checkpw(rpass, user[Users.pass])) {
                     val jedis = Jedis("localhost")
-                    val expiredAt = DateTime.now().plusMinutes(3)
+                    var token: String
 
-                    var token = ""
-                    val array = ByteArray(32)
-                    Random().nextBytes(array)
-                    array.forEach { token += String.format("%02x", it) }
-
-                    jedis.set(token, String.format("%s|%s", user[Users.id].toString(), expiredAt.toString()))
+                    do {
+                        token = ""
+                        val array = ByteArray(32)
+                        ThreadLocalRandom.current().nextBytes(array)
+                        array.forEach { token += String.format("%02x", it) }
+                    }
+                    while (jedis.setnx(token, user[Users.id].toString()) == 0L)
+                    jedis.expire(token, 300)
 
                     val mapper = ObjectMapper()
                     val node = mapper.createObjectNode()
                     node.put("token", token)
-                    node.put("expired_at", expiredAt.toString())
 
                     message = mapper.writeValueAsString(node)
                     status = HttpStatus.OK
