@@ -3,6 +3,7 @@ package com.example.toshiki.pusherchat
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -17,10 +18,14 @@ class MainActivity : AppCompatActivity() {
                 val user = username.text.toString()
 
                 App.user = user
-                startActivity(Intent(this@MainActivity, ChatActivity::class.java))
+                startActivity(Intent(this@MainActivity, HomeActivity::class.java))
             } else {
                 Toast.makeText(applicationContext,"Username should not be empty", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        btnToRegister.setOnClickListener {
+            startActivity(Intent( this@MainActivity, RegisterActivity::class.java))
         }
     }
 }

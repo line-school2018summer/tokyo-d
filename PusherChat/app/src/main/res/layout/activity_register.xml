@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".RegisterActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="Register"
         android:textSize="25dp"
         android:id="@+id/loginLabel"
         android:gravity="center"
@@ -27,22 +27,33 @@
         android:inputType="text"
         android:maxLines="1"
         app:layout_constraintTop_toBottomOf="@id/loginLabel"
-        app:layout_constraintBottom_toTopOf="@id/btnLogin" />
+        app:layout_constraintBottom_toTopOf="@id/password" />
 
-    <Button
-        android:id="@+id/btnLogin"
+    <EditText
+        android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login"
-        app:layout_constraintTop_toBottomOf="@+id/username"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        app:layout_constraintTop_toBottomOf="@id/username"
+        app:layout_constraintBottom_toTopOf="@id/password2" />
+
+    <EditText
+        android:id="@+id/password2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        app:layout_constraintTop_toBottomOf="@id/password"
+        app:layout_constraintBottom_toTopOf="@id/btnRegister" />
 
     <Button
-        android:id="@+id/btnToRegister"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnRegister"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Register"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
-
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </android.support.constraint.ConstraintLayout>

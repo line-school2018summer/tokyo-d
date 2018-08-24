@@ -1,0 +1,21 @@
+package com.example.demo
+
+import com.pusher.rest.Pusher
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+
+@RestController
+@RequestMapping("/message")
+class MessageController {
+    private val pusher = Pusher("582312", "01a98eae02867f7457ed", "7059c026a84007146515")
+
+    init {
+        pusher.setCluster("ap1")
+    }
+
+    @PostMapping
+    fun postMessage(@RequestBody message: Message) : ResponseEntity<Unit> {
+        pusher.trigger("chat", "new_message", message)
+        return ResponseEntity.ok().build()
+    }
+}

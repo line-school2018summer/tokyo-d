@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.other_message.view.*
 private const val VIEW_TYPE_MY_MESSAGE = 1
 private const val VIEW_TYPE_OTHER_MESSAGE = 2
 
-
 class MessageAdapter (val context: Context) : RecyclerView.Adapter<MessageViewHolder>() {
     private val messages: ArrayList<Message> = ArrayList()
 
@@ -75,10 +74,10 @@ class MessageAdapter (val context: Context) : RecyclerView.Adapter<MessageViewHo
             timeText.text = DateUtils.fromMillisToTimeString(message.time)
         }
     }
+
+
 }
 
 open class MessageViewHolder (view: View) : RecyclerView.ViewHolder(view) {
     open fun bind(message:Message) {}
 }
-
-

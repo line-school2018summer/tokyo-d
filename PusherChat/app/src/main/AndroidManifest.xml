@@ -18,7 +18,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChatActivity"></activity>
+        <activity android:name=".ChatActivity" />
+        <activity
+            android:name=".Navigation"
+            android:label="@string/title_activity_navigation"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NavigationChatActivity"
+            android:label="@string/title_activity_navigation_chat" />
+        <activity android:name=".RegisterActivity" />
+        <activity
+            android:name=".HomeActivity"
+            android:label="@string/title_activity_home"></activity>
     </application>
 
 </manifest>
