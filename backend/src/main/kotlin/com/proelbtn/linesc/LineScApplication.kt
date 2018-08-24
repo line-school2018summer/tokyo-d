@@ -5,16 +5,11 @@ import com.proelbtn.linesc.model.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.SchemaUtils.create
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.joda.time.DateTime
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.handler.MappedInterceptor
-import redis.clients.jedis.Jedis
-import java.util.*
 
 
 @Configuration
