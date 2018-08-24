@@ -7,9 +7,10 @@ Change "APP_ID", "KEY", "SECRET" and "CLUSTER" to yours in demo/src/main/kotlin/
 ## contents
 mock
 
-login(register) -> home -> Friends  
-                        -> Talks  
-                        -> Setting(does not work)
+login(register) -> home
+=> Friends
+=> Talks
+=> Setting(does not work)
 
 tap a contet of lists in friends or talks and then start chat.
 it is not good, so need more sophiscated.
