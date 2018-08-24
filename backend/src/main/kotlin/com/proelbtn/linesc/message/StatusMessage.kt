@@ -1,3 +1,3 @@
 package com.proelbtn.linesc.message
 
-class StatusMessage(var status: String)
+class StatusMessage(var status: String?)

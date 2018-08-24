@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletRequest
 
 @Component
 class AuthorizationInterceptor: HandlerInterceptor{
-    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any) : Boolean{
+    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any) : Boolean {
+        var user = ""
         var flag = true
         if (handler is HandlerMethod) {
             if (handler.getMethodAnnotation(Authorization::class.java) != null) {
@@ -21,8 +22,7 @@ class AuthorizationInterceptor: HandlerInterceptor{
                 if (auth.isNullOrEmpty() || !auth.startsWith("Bearer ")) flag = false
                 if (flag) {
                     val token = auth.substring("Bearer ".length)
-                    val user = jedis.get(token)
-
+                    user = jedis.get(token)
                     flag = !user.isNullOrEmpty()
                 }
             }

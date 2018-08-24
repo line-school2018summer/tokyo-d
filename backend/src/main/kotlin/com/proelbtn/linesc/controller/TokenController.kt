@@ -1,8 +1,7 @@
 package com.proelbtn.linesc.controller
 
-import com.proelbtn.linesc.message.StatusMessage
 import com.proelbtn.linesc.message.TokenMessage
-import com.proelbtn.linesc.message.UserLoginMessage
+import com.proelbtn.linesc.message.UserMessage
 import com.proelbtn.linesc.model.Users
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -18,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom
 @RestController
 class TokenController {
     @PostMapping("/token")
-    fun getToken(@RequestBody msg: UserLoginMessage): ResponseEntity<TokenMessage> {
+    fun getToken(@RequestBody msg: UserMessage): ResponseEntity<TokenMessage> {
         println(msg.sid)
         println(msg.pass)
 
