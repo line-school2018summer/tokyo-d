@@ -1,7 +1,7 @@
 package com.proelbtn.linesc.controller
 
-import com.proelbtn.linesc.message.TokenMessage
-import com.proelbtn.linesc.message.UserMessage
+import com.proelbtn.linesc.message.response.TokenMessage
+import com.proelbtn.linesc.message.request.UserMessage
 import com.proelbtn.linesc.model.Users
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction

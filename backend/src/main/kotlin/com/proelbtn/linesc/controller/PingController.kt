@@ -1,6 +1,6 @@
 package com.proelbtn.linesc.controller
 
-import com.proelbtn.linesc.message.StatusMessage
+import com.proelbtn.linesc.message.response.StatusMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
