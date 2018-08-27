@@ -16,7 +16,7 @@ import java.util.*
 @RestController
 class GroupsController {
     @GetMapping(
-            "/groups/id/{id}"
+            "/groups/{id}"
     )
     fun getGroupInformationFromId(@PathVariable("id") id: String): ResponseEntity<String> {
         var message: String = ""
@@ -49,7 +49,7 @@ class GroupsController {
     }
 
     @DeleteMapping(
-            "/groups/id/{id}"
+            "/groups/{id}"
     )
     fun deleteGroupInformationFromId(@PathVariable("id") id: String): ResponseEntity<String> {
         var message: String = ""

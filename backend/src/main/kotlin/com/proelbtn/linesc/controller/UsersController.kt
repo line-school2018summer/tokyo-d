@@ -69,7 +69,7 @@ class UsersController {
     }
 
     @GetMapping(
-            "/users/id/{id}"
+            "/users/{id}"
     )
     fun getUserInformationFromId(@PathVariable("id") id: String): ResponseEntity<String> {
         var message: String = "{}"
@@ -99,7 +99,7 @@ class UsersController {
     }
 
     @DeleteMapping(
-            "/users/id/{id}"
+            "/users/{id}"
     )
     fun deleteUserInformationFromId(@PathVariable("id") id: String): ResponseEntity<String> {
         var message: String = "{}"
