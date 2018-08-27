@@ -4,6 +4,7 @@ import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.message.request.GroupSelector
 import com.proelbtn.linesc.message.response.GroupResponseMessage
 import com.proelbtn.linesc.model.UserGroups
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -27,7 +28,6 @@ class GroupsController {
 
         val rsid = selector.sid
         val rname = selector.name
-
 
         if (rsid == null || rname == null) status = HttpStatus.BAD_REQUEST
         else if (rsid.isEmpty() || rname.isEmpty()) status = HttpStatus.BAD_REQUEST
@@ -96,14 +96,18 @@ class GroupsController {
         return ResponseEntity(message, status)
     }
 
+    @Authentication
     @DeleteMapping(
             "/groups/{id}"
     )
-    fun deleteGroupInformationFromId(@PathVariable("id") id: String): ResponseEntity<Unit> {
+    fun deleteGroupInformationFromId(@RequestAttribute("user") user: String,
+                                     @PathVariable("id") id: String): ResponseEntity<Unit> {
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
         transaction {
-            val count = UserGroups.deleteWhere { UserGroups.id eq UUID.fromString(id) }
+            val count = UserGroups.deleteWhere {
+                (UserGroups.id eq UUID.fromString(id)) and (UserGroups.owner eq UUID.fromString(user))
+            }
 
             if (count == 1) status = HttpStatus.OK
             else if (count == 0) status = HttpStatus.BAD_REQUEST
