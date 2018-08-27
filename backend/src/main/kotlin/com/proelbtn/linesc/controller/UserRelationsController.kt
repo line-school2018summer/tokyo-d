@@ -4,6 +4,7 @@ import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.message.request.UserSelector
 import com.proelbtn.linesc.message.response.StatusMessage
 import com.proelbtn.linesc.model.UserRelations
+import com.proelbtn.linesc.model.Users
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -24,6 +25,12 @@ class UserRelationsController {
 
         val fid = UUID.fromString(user)
         val tid = UUID.fromString(selector.id)
+
+        // validation
+        // We don't need to check fid.count() because token is issued
+        val tq = Users.select { Users.id eq tid }.count()
+        if (tq == 0) return ResponseEntity(HttpStatus.BAD_REQUEST)
+        else if (tq > 1) return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
 
         val query = UserRelations.select {
             (UserRelations.from eq fid) and (UserRelations.to eq tid)
