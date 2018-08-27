@@ -1,6 +1,6 @@
 package com.proelbtn.linesc
 
-import com.proelbtn.linesc.interceptor.AuthorizationInterceptor
+import com.proelbtn.linesc.interceptor.AuthenticationInterceptor
 import com.proelbtn.linesc.model.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -32,7 +32,7 @@ class LineScApplication {
 
     @Bean
     fun interceptor(): MappedInterceptor {
-        return MappedInterceptor(arrayOf("/**"), AuthorizationInterceptor())
+        return MappedInterceptor(arrayOf("/**"), AuthenticationInterceptor())
     }
 }
 

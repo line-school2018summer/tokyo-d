@@ -1,11 +1,14 @@
 package com.proelbtn.linesc.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.proelbtn.linesc.message.request.UserSelector
+import com.proelbtn.linesc.message.response.UserResponseMessage
 import com.proelbtn.linesc.model.Users
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,61 +21,58 @@ class UsersController {
     @PostMapping(
             "/users"
     )
-    fun createUserInformation(@RequestBody body: String): ResponseEntity<String> {
-        var message: String = "{}"
+    fun createUserInformation(@RequestBody selector: UserSelector): ResponseEntity<UserResponseMessage> {
+        var message: UserResponseMessage? = null
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
-        val mapper = ObjectMapper()
-        val node = mapper.readTree(body)
+        val rsid = selector.sid
+        val rname = selector.name
+        val rpass = selector.pass
 
-        val rsid = node.path("sid").asText()
-        val rname = node.path("name").asText()
-        val rpass = node.path("pass").asText()
+        if (rsid == null || rname == null || rpass == null) status = HttpStatus.BAD_REQUEST
+        else if (rsid.isEmpty() || rname.isEmpty() || rpass.isEmpty()) status = HttpStatus.BAD_REQUEST
+        else {
+            transaction {
+                val query = Users.select { Users.sid eq rsid }.firstOrNull()
 
-        if (rsid.isNullOrEmpty() || rname.isNullOrEmpty() || rpass.isNullOrEmpty());
+                if (query != null) status = HttpStatus.BAD_REQUEST
+                else {
+                    val now = DateTime.now()
+                    val uuid = UUID.randomUUID()
 
-        transaction {
-            val query = Users.select { Users.sid eq rsid }
+                    Users.insert {
+                        it[id] = uuid
+                        it[sid] = rsid
+                        it[name] = rname
+                        it[pass] = BCrypt.hashpw(rpass, BCrypt.gensalt(8))
+                        it[createdAt] = now
+                        it[updatedAt] = now
+                    }
 
-            if (query.count() == 0) {
-                val now = DateTime.now()
-                Users.insert {
-                    it[id] = UUID.randomUUID()
-                    it[sid] = rsid
-                    it[name] = rname
-                    it[pass] = BCrypt.hashpw(rpass, BCrypt.gensalt(8))
-                    it[createdAt] = now
-                    it[updatedAt] = now
+                    val user = Users.select { Users.id eq uuid }.firstOrNull()
+
+                    if (user != null) {
+                        message = UserResponseMessage(
+                                user[Users.id].toString(),
+                                user[Users.sid].toString(),
+                                user[Users.name].toString(),
+                                user[Users.createdAt].toString(),
+                                user[Users.updatedAt].toString()
+                        )
+                        status = HttpStatus.OK
+                    }
                 }
-
-                val query = Users.select { Users.sid eq rsid }
-
-                if (query.count() == 1) {
-                    val user = query.first()
-                    val mapper = ObjectMapper()
-                    val node = mapper.createObjectNode()
-                    node.put("id", user[Users.id].toString())
-                    node.put("sid", user[Users.sid].toString())
-                    node.put("name", user[Users.name].toString())
-                    node.put("created_at", user[Users.createdAt].toString())
-                    node.put("updated_at", user[Users.updatedAt].toString())
-
-                    message = mapper.writeValueAsString(node)
-                    status = HttpStatus.OK
-                }
-                else status = HttpStatus.INTERNAL_SERVER_ERROR
             }
-            else status = HttpStatus.BAD_REQUEST
         }
 
-        return ResponseEntity(message, status);
+        return ResponseEntity(message, status)
     }
 
     @GetMapping(
             "/users/{id}"
     )
-    fun getUserInformationFromId(@PathVariable("id") id: String): ResponseEntity<String> {
-        var message: String = "{}"
+    fun getUserInformationFromId(@PathVariable("id") id: String): ResponseEntity<UserResponseMessage> {
+        var message: UserResponseMessage? = null
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
         transaction {
@@ -80,15 +80,14 @@ class UsersController {
 
             if (query.count() == 1) {
                 val user = query.first()
-                val mapper = ObjectMapper()
-                val node = mapper.createObjectNode()
-                node.put("id", user[Users.id].toString())
-                node.put("sid", user[Users.sid].toString())
-                node.put("name", user[Users.name].toString())
-                node.put("created_at", user[Users.createdAt].toString())
-                node.put("updated_at", user[Users.updatedAt].toString())
 
-                message = mapper.writeValueAsString(node)
+                message = UserResponseMessage(
+                        user[Users.id].toString(),
+                        user[Users.sid].toString(),
+                        user[Users.name].toString(),
+                        user[Users.createdAt].toString(),
+                        user[Users.updatedAt].toString()
+                )
                 status = HttpStatus.OK
             }
             else if (query.count() == 0) status = HttpStatus.NOT_FOUND
@@ -101,8 +100,7 @@ class UsersController {
     @DeleteMapping(
             "/users/{id}"
     )
-    fun deleteUserInformationFromId(@PathVariable("id") id: String): ResponseEntity<String> {
-        var message: String = "{}"
+    fun deleteUserInformationFromId(@PathVariable("id") id: String): ResponseEntity<Unit> {
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
         transaction {
@@ -113,6 +111,6 @@ class UsersController {
             else status = HttpStatus.INTERNAL_SERVER_ERROR
         }
 
-        return ResponseEntity(message, status)
+        return ResponseEntity(status)
     }
 }

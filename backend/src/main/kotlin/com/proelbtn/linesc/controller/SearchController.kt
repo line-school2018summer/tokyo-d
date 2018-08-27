@@ -1,6 +1,6 @@
 package com.proelbtn.linesc.controller
 
-import com.proelbtn.linesc.message.response.UserGroupResponseMessage
+import com.proelbtn.linesc.message.response.GroupResponseMessage
 import com.proelbtn.linesc.message.response.UserResponseMessage
 import com.proelbtn.linesc.model.UserGroups
 import com.proelbtn.linesc.model.Users
@@ -42,8 +42,8 @@ class SearchController {
     }
 
     @GetMapping("/search/groups/{sid}")
-    fun searchGroupInformation(@PathVariable("sid") sid: String): ResponseEntity<UserGroupResponseMessage> {
-        var message: UserGroupResponseMessage? = null
+    fun searchGroupInformation(@PathVariable("sid") sid: String): ResponseEntity<GroupResponseMessage> {
+        var message: GroupResponseMessage? = null
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
         transaction {
@@ -52,7 +52,7 @@ class SearchController {
             if (query.count() == 1) {
                 var group = query.first()
 
-                message = UserGroupResponseMessage(
+                message = GroupResponseMessage(
                         group[UserGroups.id].toString(),
                         group[UserGroups.sid],
                         group[UserGroups.name],

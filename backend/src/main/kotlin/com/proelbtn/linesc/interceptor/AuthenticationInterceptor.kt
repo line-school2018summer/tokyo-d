@@ -1,6 +1,6 @@
 package com.proelbtn.linesc.interceptor
 
-import com.proelbtn.linesc.annotation.Authorization
+import com.proelbtn.linesc.annotation.Authentication
 import org.joda.time.DateTime
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
@@ -11,18 +11,18 @@ import redis.clients.jedis.Jedis
 import javax.servlet.http.HttpServletRequest
 
 @Component
-class AuthorizationInterceptor: HandlerInterceptor{
+class AuthenticationInterceptor: HandlerInterceptor{
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any) : Boolean {
-        var user = ""
         var flag = true
         if (handler is HandlerMethod) {
-            if (handler.getMethodAnnotation(Authorization::class.java) != null) {
+            if (handler.getMethodAnnotation(Authentication::class.java) != null) {
                 val jedis = Jedis("localhost")
                 val auth = request.getHeader("Authorization")
                 if (auth.isNullOrEmpty() || !auth.startsWith("Bearer ")) flag = false
                 if (flag) {
                     val token = auth.substring("Bearer ".length)
-                    user = jedis.get(token)
+                    val user = jedis.get(token)
+                    request.setAttribute("user", user)
                     flag = !user.isNullOrEmpty()
                 }
             }

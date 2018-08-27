@@ -1,7 +1,8 @@
 package com.proelbtn.linesc.message.request
 
-class UserMessage {
+class UserSelector {
     var id: String? = null
     var sid: String? = null
+    var name: String? = null
     var pass: String? = null
 }

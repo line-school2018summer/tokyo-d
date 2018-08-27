@@ -1,6 +1,6 @@
 package com.proelbtn.linesc.message.response
 
-class UserGroupResponseMessage(
+class GroupResponseMessage(
         val id: String,
         val sid: String,
         val name: String,
