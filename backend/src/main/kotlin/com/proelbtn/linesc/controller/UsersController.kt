@@ -74,7 +74,7 @@ class UsersController {
     @GetMapping(
             "/users/{id}"
     )
-    fun getUserInformationFromId(@PathVariable("id") id: String): ResponseEntity<UserResponseMessage> {
+    fun getUserInformation(@PathVariable("id") id: String): ResponseEntity<UserResponseMessage> {
         var message: UserResponseMessage? = null
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
@@ -104,7 +104,7 @@ class UsersController {
     @DeleteMapping(
             "/users/{id}"
     )
-    fun deleteUserInformationFromId(@RequestAttribute("user") user: String,
+    fun deleteUserInformation(@RequestAttribute("user") user: String,
                                     @PathVariable("id") id: String): ResponseEntity<Unit> {
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 

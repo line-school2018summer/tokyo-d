@@ -72,7 +72,7 @@ class GroupsController {
     @GetMapping(
             "/groups/{id}"
     )
-    fun getGroupInformationFromId(@PathVariable("id") id: String): ResponseEntity<GroupResponseMessage> {
+    fun getGroupInformation(@PathVariable("id") id: String): ResponseEntity<GroupResponseMessage> {
         var message: GroupResponseMessage? = null
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
@@ -100,7 +100,7 @@ class GroupsController {
     @DeleteMapping(
             "/groups/{id}"
     )
-    fun deleteGroupInformationFromId(@RequestAttribute("user") user: String,
+    fun deleteGroupInformation(@RequestAttribute("user") user: String,
                                      @PathVariable("id") id: String): ResponseEntity<Unit> {
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
