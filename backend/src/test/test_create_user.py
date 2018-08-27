@@ -24,13 +24,21 @@ def get_user(uid):
     return res.json() if res.status_code == 200 else None
 
 
-def delete_user(uid):
-    res = requests.delete(_f('users/' + uid))
+def get_token(params):
+    assert 'sid' in params
+    assert 'pass' in params
+
+    res = requests.post(_f('token'), json=params)
+    return res.json()['token'] if res.status_code == 200 else None
+
+
+def delete_user(token, uid):
+    res = requests.delete(_f('users/' + uid), headers={'Authorization': 'Bearer ' + token})
 
     return res.status_code == 200
 
 
-def test_create_user():
+def test_user_registration():
     user = {
         'sid': 'proelbtn',
         'name': 'proelbtn',
@@ -42,7 +50,8 @@ def test_create_user():
     u = search_user(user['sid'])
     assert u is not None
 
-    uid = u['id']
+    t = get_token(user)
+    assert t is not None 
 
-    assert delete_user(uid)
+    assert delete_user(t, u['id'])
 

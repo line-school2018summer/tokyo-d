@@ -1,6 +1,5 @@
 package com.proelbtn.linesc.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.message.request.GroupSelector
 import com.proelbtn.linesc.message.response.GroupResponseMessage

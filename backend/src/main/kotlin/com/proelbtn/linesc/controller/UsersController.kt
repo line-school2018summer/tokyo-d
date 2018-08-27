@@ -1,9 +1,11 @@
 package com.proelbtn.linesc.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.message.request.UserSelector
 import com.proelbtn.linesc.message.response.UserResponseMessage
 import com.proelbtn.linesc.model.Users
+import io.swagger.annotations.Authorization
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.context.annotation.RequestScope
 import java.util.*
 
 @RestController
@@ -97,18 +100,23 @@ class UsersController {
         return ResponseEntity(message, status)
     }
 
+    @Authentication
     @DeleteMapping(
             "/users/{id}"
     )
-    fun deleteUserInformationFromId(@PathVariable("id") id: String): ResponseEntity<Unit> {
+    fun deleteUserInformationFromId(@RequestAttribute("user") user: String,
+                                    @PathVariable("id") id: String): ResponseEntity<Unit> {
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
-        transaction {
-            val count = Users.deleteWhere { Users.id eq UUID.fromString(id) }
+        if (id != user) status = HttpStatus.BAD_REQUEST
+        else {
+            transaction {
+                val count = Users.deleteWhere { Users.id eq UUID.fromString(id) }
 
-            if (count == 1) status = HttpStatus.OK
-            else if (count == 0) status = HttpStatus.BAD_REQUEST
-            else status = HttpStatus.INTERNAL_SERVER_ERROR
+                if (count == 1) status = HttpStatus.OK
+                else if (count == 0) status = HttpStatus.BAD_REQUEST
+                else status = HttpStatus.INTERNAL_SERVER_ERROR
+            }
         }
 
         return ResponseEntity(status)

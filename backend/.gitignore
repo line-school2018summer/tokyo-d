@@ -65,3 +65,6 @@ fabric.properties
 build/
 .gradle/
 .idea/
+
+src/test/__pycache__
+src/test/.pytest_cache
