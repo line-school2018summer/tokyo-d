@@ -3,6 +3,33 @@ import requests
 def _f(path):
     return 'http://localhost:8080/' + path
 
+def create_user(params):
+    assert 'sid' in params
+    assert 'name' in params
+    assert 'pass' in params
+
+    res = requests.post(_f('users'), json=params)
+    return res.status_code == 200
+
+
+def search_user(sid):
+    res = requests.get(_f('search/users/' + sid))
+
+    return res.json() if res.status_code == 302 else None
+
+
+def get_user(uid):
+    res = requests.get(_f('users/' + uid))
+
+    return res.json() if res.status_code == 200 else None
+
+
+def delete_user(uid):
+    res = requests.delete(_f('users/' + uid))
+
+    return res.status_code == 200
+
+
 def test_create_user():
     user = {
         'sid': 'proelbtn',
@@ -10,18 +37,12 @@ def test_create_user():
         'pass': 'proelbtn',
     }
 
-    res1 = requests.post(_f('users'), json=user)
-    assert res1.status_code == 200
+    assert create_user(user)
 
-    res2 = requests.get(_f('search/users/' + user['sid']))
-    assert res2.status_code == 302
+    u = search_user(user['sid'])
+    assert u is not None
 
-    res_user = res2.json()
+    uid = u['id']
 
-    assert user['sid'] == res_user['sid']
-    assert user['name'] == res_user['name']
+    assert delete_user(uid)
 
-    res_user_id = res_user['id']
-
-    res3 = requests.delete(_f('users/' + res_user_id))
-    assert res3.status_code == 200
