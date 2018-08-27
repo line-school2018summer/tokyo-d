@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class PingController {
-    @Authentication
     @GetMapping("/ping")
-    fun ping(@RequestAttribute("user") user: String): ResponseEntity<StatusMessage> {
-        println(user)
+    fun ping(): ResponseEntity<StatusMessage> {
         return ResponseEntity(StatusMessage(null), HttpStatus.OK)
     }
 }
