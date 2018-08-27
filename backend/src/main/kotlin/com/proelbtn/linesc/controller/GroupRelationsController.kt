@@ -87,7 +87,7 @@ class GroupRelationsController {
 
     @Authentication
     @DeleteMapping(
-            "/relations/users/{id}"
+            "/relations/groups/{id}"
     )
     fun deleteGroupRelation(@RequestAttribute("user") user: String,
                            @PathVariable id: String): ResponseEntity<Unit> {

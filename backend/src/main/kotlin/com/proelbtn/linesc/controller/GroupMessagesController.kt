@@ -15,9 +15,9 @@ import java.util.*
 class GroupMessagesController {
     @Authentication
     @PostMapping(
-            "/messages/users/{id}"
+            "/messages/groups/{id}"
     )
-    fun createUserMessage(@RequestAttribute("user") user: String,
+    fun createGroupMessage(@RequestAttribute("user") user: String,
                           @PathVariable("id") id: String,
                           @RequestBody selector: MessageSelector): ResponseEntity<Unit> {
         var status = HttpStatus.OK
