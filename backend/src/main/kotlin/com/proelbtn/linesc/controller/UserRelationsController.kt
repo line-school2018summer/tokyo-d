@@ -2,18 +2,17 @@ package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.message.request.UserSelector
-import com.proelbtn.linesc.message.response.StatusMessage
 import com.proelbtn.linesc.model.UserRelations
 import com.proelbtn.linesc.model.Users
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
+@RestController
 class UserRelationsController {
     @Authentication
     @PostMapping (
@@ -21,34 +20,41 @@ class UserRelationsController {
     )
     fun createUserRelation(@RequestAttribute("user") user: String,
                            @RequestBody selector: UserSelector): ResponseEntity<Unit> {
-        var status = HttpStatus.INTERNAL_SERVER_ERROR
+        var status = HttpStatus.OK
 
         val fid = UUID.fromString(user)
         val tid = UUID.fromString(selector.id)
 
-        // validation
-        // We don't need to check fid.count() because token is issued
-        val tq = Users.select { Users.id eq tid }.count()
-        if (tq == 0) return ResponseEntity(HttpStatus.BAD_REQUEST)
-        else if (tq > 1) return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        transaction {
+            // validation
+            // We don't need to check fid.count() because token is issued
 
-        val query = UserRelations.select {
-            (UserRelations.from eq fid) and (UserRelations.to eq tid)
-        }.firstOrNull()
+            val tq = Users.select { Users.id eq tid }.count()
+            if (tq == 0) status = HttpStatus.BAD_REQUEST
+            else if (tq > 1) status = HttpStatus.INTERNAL_SERVER_ERROR
 
-        if (query == null) {
-            UserRelations.insert {
-                it[from] = fid
-                it[to] = tid
+            if (status == HttpStatus.OK) {
+                val query = UserRelations.select {
+                    (UserRelations.from eq fid) and (UserRelations.to eq tid)
+                }.firstOrNull()
+
+                if (query == null) {
+                    val now = DateTime.now()
+                    UserRelations.insert {
+                        it[from] = fid
+                        it[to] = tid
+                        it[createdAt] = now
+                    }
+
+                    val relation = UserRelations.select {
+                        (UserRelations.from eq fid) and (UserRelations.to eq tid)
+                    }.firstOrNull()
+
+                    if (relation == null) status = HttpStatus.INTERNAL_SERVER_ERROR
+                }
+                else status = HttpStatus.BAD_REQUEST
             }
-
-            val relation = UserRelations.select {
-                (UserRelations.from eq fid) and (UserRelations.to eq tid)
-            }.firstOrNull()
-
-            if (relation != null) status = HttpStatus.OK
         }
-        else status = HttpStatus.BAD_REQUEST
 
         return ResponseEntity(status)
     }
@@ -58,18 +64,21 @@ class UserRelationsController {
             "/relations/users/{id}"
     )
     fun getUserRelation(@RequestAttribute("user") user: String,
-                           @RequestBody selector: UserSelector): ResponseEntity<Unit> {
-        var status = HttpStatus.INTERNAL_SERVER_ERROR
+                        @PathVariable("id") id: String): ResponseEntity<Unit> {
+        var status = HttpStatus.OK
 
         val fid = UUID.fromString(user)
-        val tid = UUID.fromString(selector.id)
+        val tid = UUID.fromString(id)
 
-        val query = UserRelations.select {
-            (UserRelations.from eq fid) and (UserRelations.to eq tid)
-        }.firstOrNull()
+        transaction {
+            val count = UserRelations.select {
+                (UserRelations.from eq fid) and (UserRelations.to eq tid)
+            }.count()
 
-        if (query != null) status = HttpStatus.FOUND
-        else status = HttpStatus.NOT_FOUND
+            if (count == 1) status = HttpStatus.FOUND
+            else if (count == 0) status = HttpStatus.NOT_FOUND
+            else status = HttpStatus.INTERNAL_SERVER_ERROR
+        }
 
         return ResponseEntity(status)
     }
@@ -79,17 +88,20 @@ class UserRelationsController {
             "/relations/users/{id}"
     )
     fun deleteUserRelation(@RequestAttribute("user") user: String,
-                        @RequestBody selector: UserSelector): ResponseEntity<Unit> {
-        var status = HttpStatus.INTERNAL_SERVER_ERROR
+                           @PathVariable id: String): ResponseEntity<Unit> {
+        var status = HttpStatus.OK
 
         val fid = UUID.fromString(user)
-        val tid = UUID.fromString(selector.id)
+        val tid = UUID.fromString(id)
 
-        val count = UserRelations.deleteWhere {
-            (UserRelations.from eq fid) and (UserRelations.to eq tid)
+        transaction {
+            val count = UserRelations.deleteWhere {
+                (UserRelations.from eq fid) and (UserRelations.to eq tid)
+            }
+
+            if (count == 0) status = HttpStatus.BAD_REQUEST
+            else if (count > 1) status = HttpStatus.INTERNAL_SERVER_ERROR
         }
-
-        if (count == 1) status = HttpStatus.OK
 
         return ResponseEntity(status)
     }
