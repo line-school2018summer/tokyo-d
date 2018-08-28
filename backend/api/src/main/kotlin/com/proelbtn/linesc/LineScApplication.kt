@@ -18,9 +18,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 import com.zaxxer.hikari.HikariDataSource
 import com.zaxxer.hikari.HikariConfig
 
-
-
-
 @Configuration
 @SpringBootApplication
 @EnableSwagger2

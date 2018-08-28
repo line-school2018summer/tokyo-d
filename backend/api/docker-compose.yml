@@ -1,5 +1,14 @@
 version: '3.1'
 services:
+    front:
+        image: nginx
+
+    api:
+        image
+
+    epub:
+        image: python:3
+
     db:
         image: mysql:latest
         restart: always
