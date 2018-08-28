@@ -4,6 +4,16 @@ const pc = require('..');
 const user = require('../src/user');
 const authedclient = require('../src/authedclient')
 
+function mkseed() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < 32; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
 describe('client', function() {
     const clia = pc.connect('http://localhost:8080');
     const clib = pc.connect('http://localhost:8081');
@@ -21,7 +31,7 @@ describe('client', function() {
     });
 
     const cli = clia;
-    const seed = Date.now().toString();
+    const seed = mkseed();
 
     describe('#create_user()', function() {
         it('should return user if user doesn\'t exist', async function() {

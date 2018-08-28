@@ -2,6 +2,8 @@ const axios = require('axios');
 
 const user = require('./user');
 const group = require('./group');
+const user_relation = require('./user_relation');
+const group_relation = require('./group_relation');
 
 module.exports = class {
     constructor(client, token) {
@@ -79,6 +81,76 @@ module.exports = class {
             })
             .then(_ => true)
             .catch(_ => false);
+
+        return res;
+    }
+
+    // =========================================================================
+
+    async create_user_relation(from, to) {
+        const res = await axios.post(this.url + '/relations/users', {
+            'from': from['id'],
+            'to': to['id']
+        }, {
+            'headers': { 'Authorization': 'Bearer ' + this.token }
+        })
+        .then(res => res.data)
+        .catch(_ => null);
+
+        return res ? new user_relation(res) : null;
+    }
+
+    async get_user_relation(from, to) {
+        const res = await axios.get(this.url + '/relations/users/' + to['id'], {
+            'headers': { 'Authorization': 'Bearer ' + this.token }
+        })
+        .then(res => res.data)
+        .catch(_ => null);
+
+        return res ? new user_relation(res) : null;
+    }
+
+    async delete_user_relation(from, to) {
+        const res = await axios.delete(this.url + '/relations/users/' + to['id'], {
+            'headers': { 'Authorization': 'Bearer ' + this.token }
+        })
+        .then(_ => true)
+        .catch(_ => false);
+
+        return res;
+    }
+
+    // =========================================================================
+
+    async create_group_relation(from, to) {
+        const res = await axios.post(this.url + '/relations/groups', {
+            'from': from['id'],
+            'to': to['id']
+        }, {
+            'headers': { 'Authorization': 'Bearer ' + this.token }
+        })
+        .then(res => res.data)
+        .catch(_ => null);
+
+        return res ? new group_relation(res) : null;
+    }
+
+    async get_group_relation(from, to) {
+        const res = await axios.get(this.url + '/relations/groups/' + to['id'], {
+            'headers': { 'Authorization': 'Bearer ' + this.token }
+        })
+        .then(res => res.data)
+        .catch(_ => null);
+
+        return res ? new group_relation(res) : null;
+    }
+
+    async delete_group_relation(from, to) {
+        const res = await axios.delete(this.url + '/relations/groups/' + to['id'], {
+            'headers': { 'Authorization': 'Bearer ' + this.token }
+        })
+        .then(_ => true)
+        .catch(_ => false);
 
         return res;
     }
