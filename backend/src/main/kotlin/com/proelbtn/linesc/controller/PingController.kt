@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class PingController {
     @GetMapping("/ping")
-    fun ping(): ResponseEntity<StatusMessage> {
-        return ResponseEntity(StatusMessage(null), HttpStatus.OK)
+    fun ping(): ResponseEntity<Unit> {
+        return ResponseEntity(HttpStatus.OK)
     }
 }

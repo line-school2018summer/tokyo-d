@@ -1,7 +1,7 @@
 package com.proelbtn.linesc.controller
 
-import com.proelbtn.linesc.message.response.TokenMessage
-import com.proelbtn.linesc.message.request.UserSelector
+import com.proelbtn.linesc.message.request.GetTokenRequest
+import com.proelbtn.linesc.message.response.TokenResponse
 import com.proelbtn.linesc.model.Users
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -12,42 +12,33 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import redis.clients.jedis.Jedis
-import java.util.concurrent.ThreadLocalRandom
+import java.util.*
 
 @RestController
 class TokenController {
     @PostMapping("/token")
-    fun getToken(@RequestBody selector: UserSelector): ResponseEntity<TokenMessage> {
-        var message = TokenMessage(null)
-        var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
+    fun getToken(@RequestBody req: GetTokenRequest): ResponseEntity<TokenResponse> {
+        var message = TokenResponse(null)
+        var status: HttpStatus = HttpStatus.OK
 
-        val rsid = selector.sid
-        val rpass = selector.pass
+        // validation
+        if (!req.validate()) status = HttpStatus.BAD_REQUEST
 
-        if (rsid != null && rpass != null) {
+        // operation
+        if (status == HttpStatus.OK) {
             transaction {
-                val query = Users.select { (Users.sid eq rsid) }
+                val user = Users.select { Users.sid eq req.sid }.firstOrNull()
 
-                if (query.count() == 1) {
-                    val user = query.first()
-                    if (BCrypt.checkpw(rpass, user[Users.pass])) {
-                        val jedis = Jedis("localhost")
-                        var token: String
+                if (user == null) status = HttpStatus.BAD_REQUEST
+                else if (BCrypt.checkpw(req.pass, user[Users.pass])) {
+                    val jedis = Jedis("localhost")
+                    var token = UUID.randomUUID().toString()
 
-                        do {
-                            val array = ByteArray(32)
-                            ThreadLocalRandom.current().nextBytes(array)
-                            token = array.map { String.format("%02x", it) }.reduce { acc, s -> acc + s }
-                        }
-                        while (jedis.setnx(token, user[Users.id].toString()) == 0L)
-                        jedis.expire(token, 300)
+                    jedis.set(token, user[Users.id].toString())
+                    jedis.expire(token, 300)
 
-                        message = TokenMessage(token)
-                        status = HttpStatus.OK
-                    }
+                    message = TokenResponse(token)
                 }
-                else if (query.count() == 0) status = HttpStatus.BAD_REQUEST
-                else status = HttpStatus.INTERNAL_SERVER_ERROR
             }
         }
 

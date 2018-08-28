@@ -1,3 +1,3 @@
 package com.proelbtn.linesc.message.response
 
-class TokenMessage(val token: String?)
+class TokenResponse(val token: String?)

@@ -1,7 +1,7 @@
 package com.proelbtn.linesc.controller
 
-import com.proelbtn.linesc.message.response.GroupResponseMessage
-import com.proelbtn.linesc.message.response.UserResponseMessage
+import com.proelbtn.linesc.message.response.GroupResponse
+import com.proelbtn.linesc.message.response.UserResponse
 import com.proelbtn.linesc.model.UserGroups
 import com.proelbtn.linesc.model.Users
 import org.jetbrains.exposed.sql.select
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class SearchController {
     @GetMapping("/search/users/{sid}")
-    fun searchUserInformation(@PathVariable("sid") sid: String): ResponseEntity<UserResponseMessage> {
-        var message: UserResponseMessage? = null
+    fun searchUserInformation(@PathVariable("sid") sid: String): ResponseEntity<UserResponse> {
+        var message: UserResponse? = null
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
         transaction {
@@ -25,7 +25,7 @@ class SearchController {
             if (query.count() == 1) {
                 var user = query.first()
 
-                message = UserResponseMessage(
+                message = UserResponse(
                         user[Users.id].toString(),
                         user[Users.sid],
                         user[Users.name],
@@ -42,8 +42,8 @@ class SearchController {
     }
 
     @GetMapping("/search/groups/{sid}")
-    fun searchGroupInformation(@PathVariable("sid") sid: String): ResponseEntity<GroupResponseMessage> {
-        var message: GroupResponseMessage? = null
+    fun searchGroupInformation(@PathVariable("sid") sid: String): ResponseEntity<GroupResponse> {
+        var message: GroupResponse? = null
         var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
 
         transaction {
@@ -52,7 +52,7 @@ class SearchController {
             if (query.count() == 1) {
                 var group = query.first()
 
-                message = GroupResponseMessage(
+                message = GroupResponse(
                         group[UserGroups.id].toString(),
                         group[UserGroups.sid],
                         group[UserGroups.name],

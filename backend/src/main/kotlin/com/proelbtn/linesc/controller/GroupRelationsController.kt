@@ -1,9 +1,10 @@
 package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
-import com.proelbtn.linesc.message.request.GroupSelector
+import com.proelbtn.linesc.message.request.CreateRelationRequest
 import com.proelbtn.linesc.model.UserGroupRelations
 import com.proelbtn.linesc.model.UserGroups
+import com.proelbtn.linesc.validator.validate_id
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -22,40 +23,34 @@ class GroupRelationsController {
             "/relations/groups"
     )
     fun createGroupRelation(@RequestAttribute("user") user: String,
-                            @RequestBody selector: GroupSelector): ResponseEntity<Unit> {
+                            @RequestBody req: CreateRelationRequest): ResponseEntity<Unit> {
         var status = HttpStatus.OK
 
-        val fid = UUID.fromString(user)
-        val tid = UUID.fromString(selector.id)
+        // validation
+        if (!req.validate()) status = HttpStatus.BAD_REQUEST
 
-        transaction {
-            // validation
-            // We don't need to check fid.count() because token is issued
-            val tq = UserGroups.select { UserGroups.id eq tid }.count()
-            if (tq == 0) status = HttpStatus.BAD_REQUEST
-            else if (tq > 1) status = HttpStatus.INTERNAL_SERVER_ERROR
+        if (status == HttpStatus.OK) {
+            val fid = UUID.fromString(req.from)
+            val tid = UUID.fromString(req.to)
 
-            if (status == HttpStatus.OK) {
-                val query = UserGroupRelations.select {
-                    (UserGroupRelations.from eq fid) and (UserGroupRelations.to eq tid)
-                }.firstOrNull()
-
-                if (query == null) {
-                    val now = DateTime.now()
-                    UserGroupRelations.insert {
-                        it[from] = fid
-                        it[to] = tid
-                        it[createdAt] = now
-                    }
-
-                    val relation = UserGroupRelations.select {
+            transaction {
+                if (status == HttpStatus.OK) {
+                    val query = UserGroupRelations.select {
                         (UserGroupRelations.from eq fid) and (UserGroupRelations.to eq tid)
                     }.firstOrNull()
 
-                    if (relation == null) status = HttpStatus.INTERNAL_SERVER_ERROR
+                    if (query != null) status = HttpStatus.BAD_REQUEST
                 }
-                else status = HttpStatus.BAD_REQUEST
+
+                if (status == HttpStatus.OK) {
+                    UserGroupRelations.insert {
+                        it[from] = fid
+                        it[to] = tid
+                        it[createdAt] = DateTime.now()
+                    }
+                }
             }
+
         }
 
         return ResponseEntity(status)
@@ -69,17 +64,20 @@ class GroupRelationsController {
                         @PathVariable("id") id: String): ResponseEntity<Unit> {
         var status = HttpStatus.OK
 
-        val fid = UUID.fromString(user)
-        val tid = UUID.fromString(id)
+        // validation
+        if (!validate_id(user) || !validate_id(id)) status = HttpStatus.BAD_REQUEST
 
-        transaction {
-            val count = UserGroupRelations.select {
-                (UserGroupRelations.from eq fid) and (UserGroupRelations.to eq tid)
-            }.count()
+        if (status == HttpStatus.OK) {
+            val fid = UUID.fromString(user)
+            val tid = UUID.fromString(id)
 
-            if (count == 1) status = HttpStatus.FOUND
-            else if (count == 0) status = HttpStatus.NOT_FOUND
-            else status = HttpStatus.INTERNAL_SERVER_ERROR
+            transaction {
+                val count = UserGroupRelations.select {
+                    (UserGroupRelations.from eq fid) and (UserGroupRelations.to eq tid)
+                }.count()
+
+                if (count == 0) status = HttpStatus.NOT_FOUND
+            }
         }
 
         return ResponseEntity(status)
@@ -93,16 +91,19 @@ class GroupRelationsController {
                            @PathVariable id: String): ResponseEntity<Unit> {
         var status = HttpStatus.OK
 
-        val fid = UUID.fromString(user)
-        val tid = UUID.fromString(id)
+        if (!validate_id(user) || !validate_id(id)) status = HttpStatus.BAD_REQUEST
 
-        transaction {
-            val count = UserGroupRelations.deleteWhere {
-                (UserGroupRelations.from eq fid) and (UserGroupRelations.to eq tid)
+        if (status == HttpStatus.OK) {
+            val fid = UUID.fromString(user)
+            val tid = UUID.fromString(id)
+
+            val count = transaction {
+                UserGroupRelations.deleteWhere {
+                    (UserGroupRelations.from eq fid) and (UserGroupRelations.to eq tid)
+                }
             }
 
             if (count == 0) status = HttpStatus.BAD_REQUEST
-            else if (count > 1) status = HttpStatus.INTERNAL_SERVER_ERROR
         }
 
         return ResponseEntity(status)
