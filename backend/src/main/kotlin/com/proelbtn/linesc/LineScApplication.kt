@@ -1,7 +1,12 @@
 package com.proelbtn.linesc
 
+import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+import com.mysql.jdbc.jdbc2.optional.MysqlPooledConnection
 import com.proelbtn.linesc.interceptor.AuthenticationInterceptor
 import com.proelbtn.linesc.model.*
+import org.apache.commons.dbcp2.BasicDataSource
+import org.apache.commons.dbcp2.BasicDataSourceFactory
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.SchemaUtils.create
@@ -15,6 +20,8 @@ import springfox.documentation.builders.RequestHandlerSelectors
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
+import java.util.*
+import javax.sql.DataSource
 
 
 @Configuration
@@ -37,7 +44,16 @@ class LineScApplication {
 }
 
 fun main(args: Array<String>) {
-    Database.connect("jdbc:mysql://localhost:3306/line-sc?useSSL=false", driver = "com.mysql.jdbc.Driver", user = "root", password = "lineschool")
+    val props = Properties()
+    props.setProperty("url", "jdbc:mysql://localhost:3306/line-sc?useSSL=false")
+    props.setProperty("driverClassName", "com.mysql.jdbc.Driver")
+    props.setProperty("username", "root")
+    props.setProperty("password", "lineschool")
+
+    val ds = BasicDataSourceFactory.createDataSource(props)
+    ds.initialSize = 16
+
+    Database.connect(ds)
 
     transaction {
         create(UserGroupMessages, UserGroupRelations, UserGroups, UserMessages, UserRelations, Users)
