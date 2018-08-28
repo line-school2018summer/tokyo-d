@@ -158,7 +158,9 @@ module.exports = class {
     // =========================================================================
 
     async send_message_to_user(msg, from, to) {
-        const res = await axios.post(this.url + '/messages/users/' + to['id'], {
+        const res = await axios.post(this.url + '/messages/users', {
+                'from': from['id'],
+                'to': to['id'],
                 'content': msg
             }, {
                 'headers': { 'Authorization': 'Bearer ' + this.token }
@@ -170,7 +172,9 @@ module.exports = class {
     }
 
     async send_message_to_group(msg, from, to) {
-        const res = await axios.post(this.url + '/messages/groups/' + to['id'], {
+        const res = await axios.post(this.url + '/messages/groups', {
+                'from': from['id'],
+                'to': to['id'],
                 'content': msg
             }, {
                 'headers': { 'Authorization': 'Bearer ' + this.token }

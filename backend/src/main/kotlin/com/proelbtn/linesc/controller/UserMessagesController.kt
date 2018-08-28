@@ -3,7 +3,7 @@ package com.proelbtn.linesc.controller
 import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.model.UserMessages
 import com.proelbtn.linesc.model.UserRelations
-import com.proelbtn.linesc.request.PostMessageRequest
+import com.proelbtn.linesc.request.CreateMessageRequest
 import com.proelbtn.linesc.validator.validate_id
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
@@ -19,26 +19,25 @@ import java.util.*
 class UserMessagesController {
     @Authentication
     @PostMapping(
-            "/messages/users/{id}"
+            "/messages/users"
     )
-    fun createUserMessage(@RequestBody req: PostMessageRequest,
-                          @RequestAttribute("user") user: String,
-                          @PathVariable("id") id: String): ResponseEntity<Unit> {
+    fun createUserMessage(@RequestAttribute("user") user: String,
+                          @RequestBody req: CreateMessageRequest): ResponseEntity<Unit> {
         var status = HttpStatus.OK
 
         // validation
-        if (!validate_id(user) || !validate_id(id)) status = HttpStatus.BAD_REQUEST
-        if (user == id) status = HttpStatus.BAD_REQUEST
         if (!req.validate()) status = HttpStatus.BAD_REQUEST
 
-        val fid = UUID.fromString(user)
-        val tid = UUID.fromString(id)
+        val fid = UUID.fromString(req.from)
+        val tid = UUID.fromString(req.to)
+
         val rel = transaction { UserRelations.select {
                 (UserRelations.from eq fid) and (UserRelations.to eq tid)
             }.firstOrNull()
         }
         if (rel == null) status = HttpStatus.BAD_REQUEST
 
+        // operation
         if (status == HttpStatus.OK) {
             val now = DateTime.now()
 

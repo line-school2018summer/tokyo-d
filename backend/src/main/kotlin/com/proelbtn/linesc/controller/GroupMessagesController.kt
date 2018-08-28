@@ -3,7 +3,7 @@ package com.proelbtn.linesc.controller
 import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.model.UserGroupMessages
 import com.proelbtn.linesc.model.UserGroupRelations
-import com.proelbtn.linesc.request.PostMessageRequest
+import com.proelbtn.linesc.request.CreateMessageRequest
 import com.proelbtn.linesc.validator.validate_id
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
@@ -19,25 +19,24 @@ import java.util.*
 class GroupMessagesController {
     @Authentication
     @PostMapping(
-            "/messages/groups/{id}"
+            "/messages/groups"
     )
     fun createGroupMessage(@RequestAttribute("user") user: String,
-                          @PathVariable("id") id: String,
-                          @RequestBody req: PostMessageRequest): ResponseEntity<Unit> {
+                          @RequestBody req: CreateMessageRequest): ResponseEntity<Unit> {
         var status = HttpStatus.OK
 
         // validation
-        if (!validate_id(user) || !validate_id(id)) status = HttpStatus.BAD_REQUEST
         if (!req.validate()) status = HttpStatus.BAD_REQUEST
 
-        val fid = UUID.fromString(user)
-        val tid = UUID.fromString(id)
+        val fid = UUID.fromString(req.from)
+        val tid = UUID.fromString(req.to)
         val rel = transaction { UserGroupRelations.select {
                 (UserGroupRelations.from eq fid) and (UserGroupRelations.to eq tid)
             }.firstOrNull()
         }
         if (rel == null) status = HttpStatus.BAD_REQUEST
 
+        // operation
         if (status == HttpStatus.OK) {
             val now = DateTime.now()
 
