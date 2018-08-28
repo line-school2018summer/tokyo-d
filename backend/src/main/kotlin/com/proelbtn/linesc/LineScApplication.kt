@@ -1,12 +1,7 @@
 package com.proelbtn.linesc
 
-import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource
-import com.mysql.jdbc.jdbc2.optional.MysqlPooledConnection
 import com.proelbtn.linesc.interceptor.AuthenticationInterceptor
 import com.proelbtn.linesc.model.*
-import org.apache.commons.dbcp2.BasicDataSource
-import org.apache.commons.dbcp2.BasicDataSourceFactory
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.SchemaUtils.create
@@ -20,8 +15,10 @@ import springfox.documentation.builders.RequestHandlerSelectors
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
-import java.util.*
-import javax.sql.DataSource
+import com.zaxxer.hikari.HikariDataSource
+import com.zaxxer.hikari.HikariConfig
+
+
 
 
 @Configuration
@@ -44,14 +41,12 @@ class LineScApplication {
 }
 
 fun main(args: Array<String>) {
-    val props = Properties()
-    props.setProperty("url", "jdbc:mysql://localhost:3306/line-sc?useSSL=false")
-    props.setProperty("driverClassName", "com.mysql.jdbc.Driver")
-    props.setProperty("username", "root")
-    props.setProperty("password", "lineschool")
+    val config = HikariConfig()
+    config.jdbcUrl = "jdbc:mysql://localhost:3306/line-sc?useSSL=no"
+    config.username = "root"
+    config.password = "lineschool"
 
-    val ds = BasicDataSourceFactory.createDataSource(props)
-    ds.initialSize = 16
+    val ds = HikariDataSource(config)
 
     Database.connect(ds)
 
