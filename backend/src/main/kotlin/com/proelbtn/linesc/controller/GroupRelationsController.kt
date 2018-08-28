@@ -24,7 +24,7 @@ class GroupRelationsController {
     )
     fun createGroupRelation(@RequestAttribute("user") user: String,
                             @RequestBody req: CreateRelationRequest): ResponseEntity<RelationResponse> {
-        var message: RelationResponse? = null
+        var res: RelationResponse? = null
         var status: HttpStatus = HttpStatus.OK
 
         // validation
@@ -53,13 +53,13 @@ class GroupRelationsController {
                 }
             }
 
-            if (status == HttpStatus.OK) {
-                message = RelationResponse(req.from, req.to, now.toString())
-            }
+            if (status == HttpStatus.OK)
+                res = RelationResponse(req.from, req.to, now.toString())
+
 
         }
 
-        return ResponseEntity(status)
+        return ResponseEntity(res, status)
     }
 
     @Authentication
@@ -68,7 +68,7 @@ class GroupRelationsController {
     )
     fun getGroupRelation(@RequestAttribute("user") user: String,
                         @PathVariable("id") id: String): ResponseEntity<RelationResponse> {
-        var message: RelationResponse? = null
+        var res: RelationResponse? = null
         var status: HttpStatus = HttpStatus.OK
 
         // validation
@@ -85,7 +85,7 @@ class GroupRelationsController {
 
             if (rel == null) status = HttpStatus.NOT_FOUND
             else {
-                message = RelationResponse(
+                res = RelationResponse(
                         rel[UserGroupRelations.from].toString(),
                         rel[UserGroupRelations.to].toString(),
                         rel[UserGroupRelations.createdAt].toString()
@@ -93,7 +93,7 @@ class GroupRelationsController {
             }
         }
 
-        return ResponseEntity(message, status)
+        return ResponseEntity(res, status)
     }
 
     @Authentication
