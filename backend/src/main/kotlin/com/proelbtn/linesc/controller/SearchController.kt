@@ -32,7 +32,7 @@ class SearchController {
                         user[Users.createdAt].toString(),
                         user[Users.updatedAt].toString()
                 )
-                status = HttpStatus.FOUND
+                status = HttpStatus.OK
             }
             else if (query.count() == 0) status = HttpStatus.NOT_FOUND
             else status = HttpStatus.INTERNAL_SERVER_ERROR
@@ -60,7 +60,7 @@ class SearchController {
                         group[UserGroups.createdAt].toString(),
                         group[UserGroups.updatedAt].toString()
                 )
-                status = HttpStatus.FOUND
+                status = HttpStatus.OK
             }
             else if (query.count() == 0) status = HttpStatus.NOT_FOUND
             else status = HttpStatus.INTERNAL_SERVER_ERROR
