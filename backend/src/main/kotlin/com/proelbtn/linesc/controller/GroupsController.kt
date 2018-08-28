@@ -64,7 +64,7 @@ class GroupsController {
     )
     fun getGroupInformation(@PathVariable("id") id: String): ResponseEntity<GroupResponse> {
         var message: GroupResponse? = null
-        var status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
+        var status: HttpStatus = HttpStatus.OK
 
         // validation
         if (!validate_id(id)) status = HttpStatus.BAD_REQUEST

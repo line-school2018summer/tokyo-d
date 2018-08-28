@@ -12,6 +12,7 @@ services:
         restart: always
         ports:
             - 9000:8080
+
     kvs:
         image: redis:latest
         restart: always

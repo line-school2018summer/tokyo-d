@@ -2,6 +2,7 @@ package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.message.request.CreateRelationRequest
+import com.proelbtn.linesc.message.response.RelationResponse
 import com.proelbtn.linesc.model.UserGroupRelations
 import com.proelbtn.linesc.model.UserGroups
 import com.proelbtn.linesc.validator.validate_id
@@ -23,8 +24,9 @@ class GroupRelationsController {
             "/relations/groups"
     )
     fun createGroupRelation(@RequestAttribute("user") user: String,
-                            @RequestBody req: CreateRelationRequest): ResponseEntity<Unit> {
-        var status = HttpStatus.OK
+                            @RequestBody req: CreateRelationRequest): ResponseEntity<RelationResponse> {
+        var message: RelationResponse? = null
+        var status: HttpStatus = HttpStatus.OK
 
         // validation
         if (!req.validate()) status = HttpStatus.BAD_REQUEST
@@ -32,6 +34,7 @@ class GroupRelationsController {
         if (status == HttpStatus.OK) {
             val fid = UUID.fromString(req.from)
             val tid = UUID.fromString(req.to)
+            val now = DateTime.now()
 
             transaction {
                 if (status == HttpStatus.OK) {
@@ -46,9 +49,13 @@ class GroupRelationsController {
                     UserGroupRelations.insert {
                         it[from] = fid
                         it[to] = tid
-                        it[createdAt] = DateTime.now()
+                        it[createdAt] = now
                     }
                 }
+            }
+
+            if (status == HttpStatus.OK) {
+                message = RelationResponse (req.from, req.to, now.toString())
             }
 
         }
@@ -61,8 +68,9 @@ class GroupRelationsController {
             "/relations/groups/{id}"
     )
     fun getGroupRelation(@RequestAttribute("user") user: String,
-                        @PathVariable("id") id: String): ResponseEntity<Unit> {
-        var status = HttpStatus.OK
+                        @PathVariable("id") id: String): ResponseEntity<RelationResponse> {
+        var message: RelationResponse? = null
+        var status: HttpStatus = HttpStatus.OK
 
         // validation
         if (!validate_id(user) || !validate_id(id)) status = HttpStatus.BAD_REQUEST
@@ -71,16 +79,22 @@ class GroupRelationsController {
             val fid = UUID.fromString(user)
             val tid = UUID.fromString(id)
 
-            transaction {
-                val count = UserGroupRelations.select {
+            val rel = transaction { UserGroupRelations.select {
                     (UserGroupRelations.from eq fid) and (UserGroupRelations.to eq tid)
-                }.count()
+                }.firstOrNull()
+            }
 
-                if (count == 0) status = HttpStatus.NOT_FOUND
+            if (rel == null) status = HttpStatus.NOT_FOUND
+            else {
+                message = RelationResponse (
+                        rel[UserGroupRelations.from].toString(),
+                        rel[UserGroupRelations.to].toString(),
+                        rel[UserGroupRelations.createdAt].toString()
+                )
             }
         }
 
-        return ResponseEntity(status)
+        return ResponseEntity(message, status)
     }
 
     @Authentication
@@ -88,7 +102,7 @@ class GroupRelationsController {
             "/relations/groups/{id}"
     )
     fun deleteGroupRelation(@RequestAttribute("user") user: String,
-                           @PathVariable id: String): ResponseEntity<Unit> {
+                            @PathVariable id: String): ResponseEntity<Unit> {
         var status = HttpStatus.OK
 
         if (!validate_id(user) || !validate_id(id)) status = HttpStatus.BAD_REQUEST
