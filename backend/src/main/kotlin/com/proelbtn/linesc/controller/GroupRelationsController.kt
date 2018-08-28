@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import javax.management.relation.Relation
 
 @RestController
 class GroupRelationsController {
@@ -57,6 +58,32 @@ class GroupRelationsController {
                 res = RelationResponse(req.from, req.to, now.toString())
 
 
+        }
+
+        return ResponseEntity(res, status)
+    }
+
+    @Authentication
+    @GetMapping(
+            "/relations/groups"
+    )
+    fun getGroupRelations(@RequestAttribute("user") user: String): ResponseEntity<List<RelationResponse>> {
+        var res: List<RelationResponse>? = null
+        var status: HttpStatus = HttpStatus.OK
+
+        // validation
+        if (!validate_id(user)) status = HttpStatus.BAD_REQUEST
+
+        if (status == HttpStatus.OK) {
+            val uid = UUID.fromString(user)
+
+            val rels = transaction { UserGroupRelations.select { UserGroupRelations.from eq uid }.toList() }
+
+            res = rels.map { RelationResponse(
+                    it[UserGroupRelations.from].toString(),
+                    it[UserGroupRelations.to].toString(),
+                    it[UserGroupRelations.createdAt].toString()
+            ) }
         }
 
         return ResponseEntity(res, status)

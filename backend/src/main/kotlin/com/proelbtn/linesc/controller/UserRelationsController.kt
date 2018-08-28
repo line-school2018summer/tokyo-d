@@ -26,7 +26,8 @@ class UserRelationsController {
 
         // validation
         if (!req.validate()) status = HttpStatus.BAD_REQUEST
-        if (user == req.from) status = HttpStatus.BAD_REQUEST
+        if (user != req.from) status = HttpStatus.BAD_REQUEST
+        if (req.from == req.to) status = HttpStatus.BAD_REQUEST
 
         if (status == HttpStatus.OK) {
             val fid = UUID.fromString(req.from)
@@ -34,13 +35,11 @@ class UserRelationsController {
             val now = DateTime.now()
 
             transaction {
-                if (status == HttpStatus.OK) {
-                    val query = UserRelations.select {
-                        (UserRelations.from eq fid) and (UserRelations.to eq tid)
-                    }.firstOrNull()
+                val query = UserRelations.select {
+                    (UserRelations.from eq fid) and (UserRelations.to eq tid)
+                }.firstOrNull()
 
-                    if (query != null) status = HttpStatus.BAD_REQUEST
-                }
+                if (query != null) status = HttpStatus.BAD_REQUEST
 
                 if (status == HttpStatus.OK) {
                     UserRelations.insert {
@@ -55,6 +54,35 @@ class UserRelationsController {
                 res = RelationResponse(req.from, req.to, now.toString())
             }
 
+        }
+
+        return ResponseEntity(res, status)
+    }
+
+    @Authentication
+    @GetMapping(
+            "/relations/users"
+    )
+    fun getUserRelations(@RequestAttribute("user") user: String): ResponseEntity<List<RelationResponse>> {
+        var res: List<RelationResponse>? = null
+        var status: HttpStatus = HttpStatus.OK
+
+        // validation
+        if (!validate_id(user)) status = HttpStatus.BAD_REQUEST
+
+        if (status == HttpStatus.OK) {
+            val uid = UUID.fromString(user)
+
+            val rels = transaction { UserRelations.select {
+                    (UserRelations.from eq uid) or (UserRelations.to eq uid)
+                }.toList()
+            }
+
+            res = rels.map { RelationResponse(
+                    it[UserRelations.from].toString(),
+                    it[UserRelations.to].toString(),
+                    it[UserRelations.createdAt].toString()
+            ) }
         }
 
         return ResponseEntity(res, status)
