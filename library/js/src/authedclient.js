@@ -89,33 +89,33 @@ module.exports = class {
 
     async create_user_relation(from, to) {
         const res = await axios.post(this.url + '/relations/users', {
-            'from': from['id'],
-            'to': to['id']
-        }, {
-            'headers': { 'Authorization': 'Bearer ' + this.token }
-        })
-        .then(res => res.data)
-        .catch(_ => null);
+                'from': from['id'],
+                'to': to['id']
+            }, {
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(res => res.data)
+            .catch(_ => null);
 
         return res ? new user_relation(res) : null;
     }
 
     async get_user_relation(from, to) {
         const res = await axios.get(this.url + '/relations/users/' + to['id'], {
-            'headers': { 'Authorization': 'Bearer ' + this.token }
-        })
-        .then(res => res.data)
-        .catch(_ => null);
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(res => res.data)
+            .catch(_ => null);
 
         return res ? new user_relation(res) : null;
     }
 
     async delete_user_relation(from, to) {
         const res = await axios.delete(this.url + '/relations/users/' + to['id'], {
-            'headers': { 'Authorization': 'Bearer ' + this.token }
-        })
-        .then(_ => true)
-        .catch(_ => false);
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(_ => true)
+            .catch(_ => false);
 
         return res;
     }
@@ -124,33 +124,59 @@ module.exports = class {
 
     async create_group_relation(from, to) {
         const res = await axios.post(this.url + '/relations/groups', {
-            'from': from['id'],
-            'to': to['id']
-        }, {
-            'headers': { 'Authorization': 'Bearer ' + this.token }
-        })
-        .then(res => res.data)
-        .catch(_ => null);
+                'from': from['id'],
+                'to': to['id']
+            }, {
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(res => res.data)
+            .catch(_ => null);
 
         return res ? new group_relation(res) : null;
     }
 
     async get_group_relation(from, to) {
         const res = await axios.get(this.url + '/relations/groups/' + to['id'], {
-            'headers': { 'Authorization': 'Bearer ' + this.token }
-        })
-        .then(res => res.data)
-        .catch(_ => null);
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(res => res.data)
+            .catch(_ => null);
 
         return res ? new group_relation(res) : null;
     }
 
     async delete_group_relation(from, to) {
         const res = await axios.delete(this.url + '/relations/groups/' + to['id'], {
-            'headers': { 'Authorization': 'Bearer ' + this.token }
-        })
-        .then(_ => true)
-        .catch(_ => false);
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(_ => true)
+            .catch(_ => false);
+
+        return res;
+    }
+
+    // =========================================================================
+
+    async send_message_to_user(msg, from, to) {
+        const res = await axios.post(this.url + '/messages/users/' + to['id'], {
+                'content': msg
+            }, {
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(_ => true)
+            .catch(_ => false)
+
+        return res;
+    }
+
+    async send_message_to_group(msg, from, to) {
+        const res = await axios.post(this.url + '/messages/groups/' + to['id'], {
+                'content': msg
+            }, {
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(_ => true)
+            .catch(_ => false)
 
         return res;
     }
