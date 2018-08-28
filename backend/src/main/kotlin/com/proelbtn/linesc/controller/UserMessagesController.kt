@@ -1,7 +1,7 @@
 package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
-import com.proelbtn.linesc.message.request.MessageSelector
+import com.proelbtn.linesc.request.MessageSelector
 import com.proelbtn.linesc.model.UserMessages
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction

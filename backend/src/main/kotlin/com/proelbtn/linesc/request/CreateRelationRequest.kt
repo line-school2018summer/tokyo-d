@@ -1,4 +1,4 @@
-package com.proelbtn.linesc.message.request
+package com.proelbtn.linesc.request
 
 import com.proelbtn.linesc.validator.validate_id
 

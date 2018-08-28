@@ -1,10 +1,9 @@
 package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
-import com.proelbtn.linesc.message.request.CreateRelationRequest
-import com.proelbtn.linesc.message.response.RelationResponse
+import com.proelbtn.linesc.request.CreateRelationRequest
+import com.proelbtn.linesc.response.RelationResponse
 import com.proelbtn.linesc.model.UserGroupRelations
-import com.proelbtn.linesc.model.UserGroups
 import com.proelbtn.linesc.validator.validate_id
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -55,7 +54,7 @@ class GroupRelationsController {
             }
 
             if (status == HttpStatus.OK) {
-                message = RelationResponse (req.from, req.to, now.toString())
+                message = RelationResponse(req.from, req.to, now.toString())
             }
 
         }
@@ -86,7 +85,7 @@ class GroupRelationsController {
 
             if (rel == null) status = HttpStatus.NOT_FOUND
             else {
-                message = RelationResponse (
+                message = RelationResponse(
                         rel[UserGroupRelations.from].toString(),
                         rel[UserGroupRelations.to].toString(),
                         rel[UserGroupRelations.createdAt].toString()

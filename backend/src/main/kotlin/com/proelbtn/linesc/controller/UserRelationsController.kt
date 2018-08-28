@@ -1,10 +1,9 @@
 package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
-import com.proelbtn.linesc.message.request.CreateRelationRequest
-import com.proelbtn.linesc.message.response.RelationResponse
+import com.proelbtn.linesc.request.CreateRelationRequest
+import com.proelbtn.linesc.response.RelationResponse
 import com.proelbtn.linesc.model.UserRelations
-import com.proelbtn.linesc.model.Users
 import com.proelbtn.linesc.validator.validate_id
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -84,7 +83,7 @@ class UserRelationsController {
 
             if (rel == null) status = HttpStatus.NOT_FOUND
             else {
-                res = RelationResponse (
+                res = RelationResponse(
                         rel[UserRelations.from].toString(),
                         rel[UserRelations.to].toString(),
                         rel[UserRelations.createdAt].toString()

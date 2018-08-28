@@ -1,8 +1,8 @@
 package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
-import com.proelbtn.linesc.message.request.CreateGroupRequest
-import com.proelbtn.linesc.message.response.GroupResponse
+import com.proelbtn.linesc.request.CreateGroupRequest
+import com.proelbtn.linesc.response.GroupResponse
 import com.proelbtn.linesc.model.UserGroups
 import com.proelbtn.linesc.validator.validate_id
 import org.jetbrains.exposed.sql.and

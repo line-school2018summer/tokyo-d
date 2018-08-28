@@ -1,7 +1,7 @@
 package com.proelbtn.linesc.controller
 
-import com.proelbtn.linesc.message.request.GetTokenRequest
-import com.proelbtn.linesc.message.response.TokenResponse
+import com.proelbtn.linesc.request.GetTokenRequest
+import com.proelbtn.linesc.response.TokenResponse
 import com.proelbtn.linesc.model.Users
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction

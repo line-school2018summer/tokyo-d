@@ -1,4 +1,4 @@
-package com.proelbtn.linesc.message.response
+package com.proelbtn.linesc.response
 
 class GroupResponse(
         val id: String,

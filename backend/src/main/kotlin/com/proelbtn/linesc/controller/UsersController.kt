@@ -1,8 +1,8 @@
 package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
-import com.proelbtn.linesc.message.request.CreateUserRequest
-import com.proelbtn.linesc.message.response.UserResponse
+import com.proelbtn.linesc.request.CreateUserRequest
+import com.proelbtn.linesc.response.UserResponse
 import com.proelbtn.linesc.model.Users
 import com.proelbtn.linesc.validator.validate_id
 import org.jetbrains.exposed.sql.deleteWhere
