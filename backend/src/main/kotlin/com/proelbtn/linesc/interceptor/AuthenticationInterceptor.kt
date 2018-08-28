@@ -28,11 +28,7 @@ class AuthenticationInterceptor: HandlerInterceptor{
             }
         }
 
-        if (!flag) {
-            response.status = 403
-            response.contentType = "application/json"
-            response.writer.write("{}")
-        }
+        if (!flag) response.status = 403
 
         return flag
     }

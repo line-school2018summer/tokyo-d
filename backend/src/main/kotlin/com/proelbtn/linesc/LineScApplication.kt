@@ -37,7 +37,7 @@ class LineScApplication {
 }
 
 fun main(args: Array<String>) {
-    Database.connect("jdbc:mysql://localhost:3306/line-sc", driver = "com.mysql.jdbc.Driver", user = "root", password = "lineschool")
+    Database.connect("jdbc:mysql://localhost:3306/line-sc?useSSL=false", driver = "com.mysql.jdbc.Driver", user = "root", password = "lineschool")
 
     transaction {
         create(UserGroupMessages, UserGroupRelations, UserGroups, UserMessages, UserRelations, Users)
