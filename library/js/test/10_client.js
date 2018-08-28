@@ -26,9 +26,7 @@ describe('client', function() {
     describe('#create_user()', function() {
         it('should return user if user doesn\'t exist', async function() {
             const res = await cli.create_user({
-                'sid': seed,
-                'name': seed,
-                'pass': seed
+                'sid': seed, 'name': seed, 'pass': seed
             });
             assert.ok(res instanceof user);
         });
@@ -50,7 +48,6 @@ describe('client', function() {
                 'pass': seed,
             });
             assert.ok(res instanceof authedclient);
-            ncli = res;
         });
 
         it('should return authedclient', async function() {
@@ -59,6 +56,18 @@ describe('client', function() {
                 'pass': '',
             });
             assert.ok(res === null);
+        });
+    });
+
+    describe('#search_user', function() {
+        it('will be tested in authedclient test', function() {
+            assert.ok(true);
+        });
+    });
+
+    describe('#search_group', function() {
+        it('will be tested in authedclient test', function() {
+            assert.ok(true);
         });
     });
 });
