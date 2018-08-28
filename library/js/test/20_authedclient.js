@@ -64,6 +64,32 @@ describe('authedclient', function() {
         });
     });
 
+    describe('#get_user()', function() {
+        const seed = Date.now().toString();
+        let id;
+        
+        before(async function() {
+            await acli.create_user({
+                'sid': seed, 'name': seed, 'pass': seed
+            });
+
+            const res = await acli.search_user({ 'sid': seed })
+            id = res.id;
+        });
+
+        it('should return user if user exists', async function() {
+            const res = await acli.get_user({ 'id': id });
+
+            assert.ok(res instanceof user);
+        });
+
+        it('should return null if user doesn\'t exist', async function() {
+            const res = await acli.get_user({ 'id': 'deadbeef' });
+
+            assert.ok(res === null);
+        });
+    });
+
     describe('#delete_user()', function() {
         const seed = Date.now().toString();
         let id, tacli;
@@ -96,7 +122,7 @@ describe('authedclient', function() {
 
     // =========================================================================
 
-    describe('#create_group', function() {
+    describe('#create_group()', function() {
         const seed = Date.now().toString();
 
         it('should return group if group doesn\'t exist', async function() {
@@ -118,7 +144,7 @@ describe('authedclient', function() {
         });
     });
 
-    describe('#search_group', function() {
+    describe('#search_group()', function() {
         const seed = Date.now().toString();
 
         before(async function() {
@@ -145,7 +171,33 @@ describe('authedclient', function() {
         });
     });
 
-    describe('#delete_group', function() {
+    describe('#get_group()', function() {
+        const seed = Date.now().toString();
+        let id;
+        
+        before(async function() {
+            await acli.create_group({
+                'sid': seed, 'name': seed, 'pass': seed
+            });
+
+            const res = await acli.search_group({ 'sid': seed })
+            id = res.id;
+        });
+
+        it('should return group if group exists', async function() {
+            const res = await acli.get_group({ 'id': id });
+
+            assert.ok(res instanceof group);
+        });
+
+        it('should return null if group doesn\'t exist', async function() {
+            const res = await acli.get_group({ 'id': 'deadbeef' });
+
+            assert.ok(res === null);
+        });
+    })
+
+    describe('#delete_group()', function() {
         const seed = Date.now().toString();
         let id;
 

@@ -1,5 +1,6 @@
 const axios = require('axios');
 
+const user = require('./user');
 const group = require('./group');
 
 module.exports = class {
@@ -25,6 +26,14 @@ module.exports = class {
 
     async search_user(params) {
         return this.client.search_user(params);
+    }
+
+    async get_user(params) {
+        const res = await axios.get(this.url + '/users/' + params['id'])
+            .then(res => res.data)
+            .catch(_ => null);
+
+        return res ? new user(res) : null;
     }
 
     async delete_user(params) {
@@ -54,6 +63,14 @@ module.exports = class {
 
     async search_group(params) {
         return this.client.search_group(params);
+    }
+
+    async get_group(params) {
+        const res = await axios.get(this.url + '/groups/' + params['id'])
+            .then(res => res.data)
+            .catch(_ => null);
+
+        return res ? new group(res) : null;
     }
 
     async delete_group(params) {
