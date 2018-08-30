@@ -39,7 +39,7 @@ class LineScApplication {
 
 fun main(args: Array<String>) {
     val config = HikariConfig()
-    config.jdbcUrl = "jdbc:mysql://localhost:3306/line-sc?useSSL=no"
+    config.jdbcUrl = "jdbc:mysql://localhost:3306/linesc?useSSL=no"
     config.username = "root"
     config.password = "lineschool"
 

@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class PingController {
-    @GetMapping("/ping")
+    @GetMapping(
+            "/ping"
+    )
     fun ping(): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.OK)
     }
