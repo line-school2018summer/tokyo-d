@@ -110,6 +110,16 @@ module.exports = class {
         return res ? new user_relation(res) : null;
     }
 
+    async get_user_relations() {
+        const res = await axios.get(this.url + '/relations/users', {
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(res => res.data)
+            .catch(_ => null);
+
+        return res;
+    }
+
     async delete_user_relation(from, to) {
         const res = await axios.delete(this.url + '/relations/users/' + to['id'], {
                 'headers': { 'Authorization': 'Bearer ' + this.token }
@@ -143,6 +153,16 @@ module.exports = class {
             .catch(_ => null);
 
         return res ? new group_relation(res) : null;
+    }
+
+    async get_group_relations() {
+        const res = await axios.get(this.url + '/relations/groups', {
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(res => res.data)
+            .catch(_ => null);
+
+        return res;
     }
 
     async delete_group_relation(from, to) {
