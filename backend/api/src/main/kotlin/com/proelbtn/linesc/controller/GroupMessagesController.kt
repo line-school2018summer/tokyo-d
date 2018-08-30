@@ -3,8 +3,11 @@ package com.proelbtn.linesc.controller
 import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.model.UserGroupMessages
 import com.proelbtn.linesc.model.UserGroupRelations
+import com.proelbtn.linesc.model.UserMessages
 import com.proelbtn.linesc.request.CreateMessageRequest
+import com.proelbtn.linesc.response.MessageResponse
 import com.proelbtn.linesc.validator.validate_id
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -14,6 +17,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import javax.websocket.server.PathParam
 
 @RestController
 class GroupMessagesController {
@@ -50,5 +54,32 @@ class GroupMessagesController {
         }
 
         return ResponseEntity(status)
+    }
+
+    @Authentication
+    @GetMapping(
+            "/messages/groups/"
+    )
+    fun getGroupMessage(@RequestAttribute("user") user: UUID,
+                        @RequestParam("t") to: UUID,
+                        @RequestParam("a", required = false) after: String?): ResponseEntity<List<MessageResponse>> {
+        var status: HttpStatus = HttpStatus.OK
+
+        // operation
+        var messages = transaction { UserGroupMessages.select {
+            UserGroupMessages.to eq to
+        }.orderBy(Pair(UserGroupMessages.createdAt, SortOrder.DESC)).toList()
+        }
+
+        // object mapping
+        var msg = messages.map {
+            MessageResponse (
+                    it[UserGroupMessages.from],
+                    it[UserGroupMessages.to],
+                    it[UserGroupMessages.content]
+            )
+        }
+
+        return ResponseEntity(msg, status)
     }
 }
