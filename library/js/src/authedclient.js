@@ -177,7 +177,7 @@ module.exports = class {
 
     // =========================================================================
 
-    async send_message_to_user(msg, from, to) {
+    async send_user_message(msg, from, to) {
         const res = await axios.post(this.url + '/messages/users', {
                 'from': from['id'],
                 'to': to['id'],
@@ -191,7 +191,7 @@ module.exports = class {
         return res;
     }
 
-    async send_message_to_group(msg, from, to) {
+    async send_group_message(msg, from, to) {
         const res = await axios.post(this.url + '/messages/groups', {
                 'from': from['id'],
                 'to': to['id'],
@@ -203,5 +203,29 @@ module.exports = class {
             .catch(_ => false)
 
         return res;
+    }
+
+    // =========================================================================
+
+    async receive_user_message(to, from) {
+        const res = await axios.get(this.url + '/messages/users/', {
+                'params': { 'f': from['id'], 't': to['id'] },
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(res => res.data)
+            .catch(_ => null)
+
+        return res ? res : null;
+    }
+
+    async receive_group_message(to) {
+        const res = await axios.get(this.url + '/messages/groups/', {
+                'params': { 't': to['id'] },
+                'headers': { 'Authorization': 'Bearer ' + this.token }
+            })
+            .then(res => res.data)
+            .catch(_ => null)
+
+        return res ? res : null;
     }
 }

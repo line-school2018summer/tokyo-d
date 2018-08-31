@@ -57,31 +57,73 @@ describe('authedclient', function() {
         await acli1.create_group_relation(user1, group);
     })
 
-    describe('#send_message_to_user()', function() {
+    describe('#send_user_message()', function() {
         it('should return true if message was sent', async function() {
             const msg = 'test message';
-            const res = await acli1.send_message_to_user(msg, user1, user2);
+            const res = await acli1.send_user_message(msg, user1, user2);
+            assert.ok(res === true);
+        });
+
+        it('should return true if message was sent', async function() {
+            const msg = 'test message';
+            const res = await acli2.send_user_message(msg, user2, user1);
             assert.ok(res === true);
         });
 
         it('should return true if message wasn\'t sent', async function() {
             const msg = 'test message';
-            const res = await acli1.send_message_to_user(msg, user1, user1);
+            const res = await acli1.send_user_message(msg, user1, user1);
+            assert.ok(res === false);
+        });
+
+        it('should return true if message wasn\'t sent', async function() {
+            const msg = 'test message';
+            const res = await acli2.send_user_message(msg, user2, user2);
             assert.ok(res === false);
         });
     });
 
-    describe('#send_message_to_group()', function() {
+    describe('#send_group_message()', function() {
         it('should return true if message was sent', async function() {
             const msg = 'test message';
-            const res = await acli1.send_message_to_group(msg, user1, group);
+            const res = await acli1.send_group_message(msg, user1, group);
             assert.ok(res === true);
         });
 
         it('should return true if message wasn\'t sent', async function() {
             const msg = 'test message';
-            const res = await acli2.send_message_to_group(msg, user2, group);
+            const res = await acli2.send_group_message(msg, user2, group);
             assert.ok(res === false);
+        });
+    });
+
+    describe('#receive_user_message()', function() {
+        it('should return messages if message was sent', async function() {
+            const res = await acli1.receive_user_message(user1, user2);
+            assert.ok(res instanceof Array);
+            assert.ok(res.length !== 0);
+        });
+
+        it('should return an empty array if message wasn\'t sent', async function() {
+            const msg = 'test message';
+            const res = await acli1.receive_user_message(user1, user1);
+            assert.ok(res instanceof Array);
+            assert.ok(res.length === 0);
+        });
+    });
+
+    describe('#receive_group_message()', function() {
+        it('should return messages if message was sent', async function() {
+            const res = await acli1.receive_group_message(group);
+            assert.ok(res instanceof Array);
+            assert.ok(res.length !== 0);
+        });
+
+        it('should return an empty array if message wasn\'t sent', async function() {
+            const msg = 'test message';
+            const res = await acli2.receive_group_message(group);
+            assert.ok(res instanceof Array);
+            assert.ok(res.length === 0);
         });
     });
 });

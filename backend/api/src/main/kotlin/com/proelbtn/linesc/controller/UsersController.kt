@@ -1,12 +1,16 @@
 package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
+import com.proelbtn.linesc.model.UserGroupRelations
+import com.proelbtn.linesc.model.UserGroups
+import com.proelbtn.linesc.model.UserRelations
 import com.proelbtn.linesc.request.CreateUserRequest
 import com.proelbtn.linesc.response.UserResponse
 import com.proelbtn.linesc.model.Users
 import com.proelbtn.linesc.validator.validate_id
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -94,17 +98,21 @@ class UsersController {
     @DeleteMapping(
             "/users/{id}"
     )
-    fun deleteUserInformation(@RequestAttribute("user") user: String,
-                                    @PathVariable("id") id: String): ResponseEntity<Unit> {
+    fun deleteUserInformation(@RequestAttribute("user") user: UUID,
+                              @PathVariable("id") id: UUID): ResponseEntity<Unit> {
         var status: HttpStatus = HttpStatus.OK
 
         // validation
-        if (!validate_id(user) || !validate_id(id)) status = HttpStatus.BAD_REQUEST
-        else if (user != id) status = HttpStatus.BAD_REQUEST
+        if (user != id) status = HttpStatus.BAD_REQUEST
 
         // operation
         if (status == HttpStatus.OK) {
-            val count = transaction { Users.deleteWhere { Users.id eq UUID.fromString(id) } }
+            val count = transaction {
+                UserGroupRelations.deleteWhere { (UserGroupRelations.from eq id) or (UserGroupRelations.to eq id) }
+                UserGroups.deleteWhere { UserGroups.owner eq id }
+                UserRelations.deleteWhere { (UserRelations.from eq id) or (UserRelations.to eq id) }
+                Users.deleteWhere { Users.id eq id }
+            }
 
             if (count == 0) status = HttpStatus.BAD_REQUEST
         }

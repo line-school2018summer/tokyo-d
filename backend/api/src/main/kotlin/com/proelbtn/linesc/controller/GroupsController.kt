@@ -32,28 +32,30 @@ class GroupsController {
 
         // operation
         if (status == HttpStatus.OK) {
+            val id = UUID.randomUUID()
+            val sid = req.sid!!
+            val name = req.name!!
+            val owner = UUID.fromString(user)
             val now = DateTime.now()
-            val uuid = UUID.randomUUID()
 
             transaction {
-                val group = UserGroups.select { UserGroups.sid eq req.sid }.firstOrNull()
+                val group = UserGroups.select { UserGroups.sid eq sid }.firstOrNull()
 
                 if (group != null) status = HttpStatus.BAD_REQUEST
-
-                if (status == HttpStatus.OK) {
+                else {
                     UserGroups.insert {
-                        it[id] = uuid
-                        it[sid] = req.sid
-                        it[name] = req.name
-                        it[owner] = UUID.fromString(user)
-                        it[createdAt] = now
-                        it[updatedAt] = now
+                        it[UserGroups.id] = id
+                        it[UserGroups.sid] = sid
+                        it[UserGroups.name] = name
+                        it[UserGroups.owner] = owner
+                        it[UserGroups.createdAt] = now
+                        it[UserGroups.updatedAt] = now
                     }
                 }
             }
 
             if (status == HttpStatus.OK)
-                res = GroupResponse(uuid, req.sid, req.name, UUID.fromString(user), now.toString(), now.toString())
+                res = GroupResponse(id, sid, name, owner, now.toString(), now.toString())
         }
 
         return ResponseEntity(res, status)
