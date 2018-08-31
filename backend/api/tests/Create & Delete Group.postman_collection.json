@@ -1,0 +1,421 @@
+{
+	"info": {
+		"_postman_id": "797a06f8-a122-44a2-8f24-c238f7d4eabf",
+		"name": "Create & Delete Group",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create user 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4fbf8146-396a-478f-b406-b400f2bf879c",
+						"type": "text/javascript",
+						"exec": [
+							"function mkseed() {",
+							"    var text = \"\";",
+							"    var possible = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for (var i = 0; i < 16; i++)",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"pm.globals.set(\"user1_sid\", mkseed());",
+							"pm.globals.set(\"user1_name\", mkseed());",
+							"pm.globals.set(\"user1_pass\", mkseed());"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2bca5687-f7ab-4a93-acfc-4cfa4f9848ac",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"id\", \"sid\", \"name\", \"created_at\", \"updated_at\"],",
+							"  \"properties\": {",
+							"    \"id\": { \"type\": \"string\" },",
+							"    \"sid\": { \"type\": \"string\" },",
+							"    \"name\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" },",
+							"    \"updated_at\": { \"type\": \"string\" },",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_sid = pm.globals.get(\"user1_sid\");",
+							"    const user1_name = pm.globals.get(\"user1_name\");",
+							"    ",
+							"    pm.expect(res.sid === user1_sid).to.be.true;",
+							"    pm.expect(res.name === user1_name).to.be.true;",
+							"    pm.expect(res.created_at === res.updated_at).to.be.true;",
+							"});",
+							"",
+							"pm.globals.set(\"user1_id\", res.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{user1_sid}}\",\n\t\"name\": \"{{user1_name}}\",\n\t\"pass\": \"{{user1_pass}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get token for 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "0f05d678-cafa-414d-97dc-c0f0a3645ec7",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"token\"],",
+							"  \"properties\": {",
+							"    \"token\": { \"type\": \"string\" },",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.globals.set(\"user1_token\", res.token);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{user1_sid}}\",\n\t\"pass\": \"{{user1_pass}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/token",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create group 'GROUP1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ba9ad609-19ba-47bd-9cff-e21c1dc690b5",
+						"type": "text/javascript",
+						"exec": [
+							"function mkseed() {",
+							"    var text = \"\";",
+							"    var possible = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for (var i = 0; i < 16; i++)",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"pm.globals.set(\"group1_sid\", mkseed());",
+							"pm.globals.set(\"group1_name\", mkseed());"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "355f6dfc-28a0-4e82-bf34-5cb94e506f1a",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"id\", \"sid\", \"name\", \"owner\", \"created_at\", \"updated_at\"],",
+							"  \"properties\": {",
+							"    \"id\": { \"type\": \"string\" },",
+							"    \"sid\": { \"type\": \"string\" },",
+							"    \"name\": { \"type\": \"string\" },",
+							"    \"owner\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" },",
+							"    \"updated_at\": { \"type\": \"string\" },",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_sid = pm.globals.get(\"user1_sid\");",
+							"    const user1_name = pm.globals.get(\"user1_name\");",
+							"    ",
+							"    pm.expect(res.sid === user1_sid).to.be.true;",
+							"    pm.expect(res.name === user1_name).to.be.true;",
+							"    pm.expect(res.owner === user1_id).to.be.true;",
+							"    pm.expect(res.created_at === res.updated_at).to.be.true;",
+							"});",
+							"",
+							"pm.globals.set(\"group1_id\", res.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{user1_sid}}\",\n\t\"name\": \"{{user1_name}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/groups",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"groups"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete group 'Group1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e2743c8f-fba1-45eb-bcdd-c6c164e3e1cd",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/groups/{{group1_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"groups",
+						"{{group1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e2743c8f-fba1-45eb-bcdd-c6c164e3e1cd",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/users/{{user1_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"users",
+						"{{user1_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
