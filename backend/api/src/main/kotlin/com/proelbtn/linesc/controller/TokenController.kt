@@ -18,7 +18,7 @@ import java.util.*
 class TokenController {
     @PostMapping("/token")
     fun getToken(@RequestBody req: GetTokenRequest): ResponseEntity<TokenResponse> {
-        var message = TokenResponse(null)
+        var message: TokenResponse? = null
         var status: HttpStatus = HttpStatus.OK
 
         // validation
@@ -26,11 +26,14 @@ class TokenController {
 
         // operation
         if (status == HttpStatus.OK) {
+            val sid = req.sid!!
+            val pass = req.pass!!
+
             transaction {
-                val user = Users.select { Users.sid eq req.sid }.firstOrNull()
+                val user = Users.select { Users.sid eq sid }.firstOrNull()
 
                 if (user == null) status = HttpStatus.BAD_REQUEST
-                else if (BCrypt.checkpw(req.pass, user[Users.pass])) {
+                else if (BCrypt.checkpw(pass, user[Users.pass])) {
                     val jedis = Jedis("localhost")
                     var token = UUID.randomUUID().toString()
 
