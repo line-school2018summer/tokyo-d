@@ -201,7 +201,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "355f6dfc-28a0-4e82-bf34-5cb94e506f1a",
+						"id": "a3977083-f6ed-415b-b18e-1cbfbe969d3f",
 						"type": "text/javascript",
 						"exec": [
 							"const statusCode = 200;",
@@ -230,6 +230,7 @@
 							"});",
 							"",
 							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
 							"    const user1_sid = pm.globals.get(\"user1_sid\");",
 							"    const user1_name = pm.globals.get(\"user1_name\");",
 							"    ",

@@ -53,10 +53,10 @@ class SearchController {
                 var group = query.first()
 
                 message = GroupResponse(
-                        group[UserGroups.id].toString(),
+                        group[UserGroups.id],
                         group[UserGroups.sid],
                         group[UserGroups.name],
-                        group[UserGroups.owner].toString(),
+                        group[UserGroups.owner],
                         group[UserGroups.createdAt].toString(),
                         group[UserGroups.updatedAt].toString()
                 )

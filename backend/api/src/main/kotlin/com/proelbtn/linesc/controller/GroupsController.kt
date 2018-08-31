@@ -53,7 +53,7 @@ class GroupsController {
             }
 
             if (status == HttpStatus.OK)
-                res = GroupResponse(uuid.toString(), req.sid, req.name, user, now.toString(), now.toString())
+                res = GroupResponse(uuid, req.sid, req.name, UUID.fromString(user), now.toString(), now.toString())
         }
 
         return ResponseEntity(res, status)
@@ -76,10 +76,10 @@ class GroupsController {
             if (group == null) status = HttpStatus.NOT_FOUND
             else {
                 message = GroupResponse(
-                        group[UserGroups.id].toString(),
-                        group[UserGroups.sid].toString(),
-                        group[UserGroups.name].toString(),
-                        group[UserGroups.owner].toString(),
+                        group[UserGroups.id],
+                        group[UserGroups.sid],
+                        group[UserGroups.name],
+                        group[UserGroups.owner],
                         group[UserGroups.createdAt].toString(),
                         group[UserGroups.updatedAt].toString()
                 )
