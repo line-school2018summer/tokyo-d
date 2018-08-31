@@ -26,7 +26,7 @@ class SearchController {
                 var user = query.first()
 
                 message = UserResponse(
-                        user[Users.id].toString(),
+                        user[Users.id],
                         user[Users.sid],
                         user[Users.name],
                         user[Users.createdAt].toString(),

@@ -30,30 +30,32 @@ class UsersController {
 
         // operation
         if (status == HttpStatus.OK) {
-            val uuid = UUID.randomUUID()
+            val id = UUID.randomUUID()
+            val sid = req.sid!!
+            val name = req.name!!
+            val pass = BCrypt.hashpw(req.pass!!, BCrypt.gensalt(8))
             val now = DateTime.now()
-            val hpass = BCrypt.hashpw(req.pass, BCrypt.gensalt(8))
 
             transaction {
                 // check if user is already registered
-                val user = Users.select { Users.sid eq req.sid }.firstOrNull()
+                val user = Users.select { Users.sid eq sid }.firstOrNull()
                 if (user != null) status = HttpStatus.BAD_REQUEST
 
                 // if user isn't registered, register it
                 if (status == HttpStatus.OK) {
                     Users.insert {
-                        it[id] = uuid
-                        it[sid] = req.sid
-                        it[name] = req.name
-                        it[pass] = hpass
-                        it[createdAt] = now
-                        it[updatedAt] = now
+                        it[Users.id] = id
+                        it[Users.sid] = sid
+                        it[Users.name] = name
+                        it[Users.pass] = pass
+                        it[Users.createdAt] = now
+                        it[Users.updatedAt] = now
                     }
                 }
             }
 
             if (status == HttpStatus.OK)
-                message = UserResponse(uuid.toString(), req.sid, req.name, now.toString(), now.toString())
+                message = UserResponse(id, sid, name, now.toString(), now.toString())
         }
 
         return ResponseEntity(message, status)
@@ -76,9 +78,9 @@ class UsersController {
             if (user == null) status = HttpStatus.NOT_FOUND
             else {
                 message = UserResponse(
-                        user[Users.id].toString(),
-                        user[Users.sid].toString(),
-                        user[Users.name].toString(),
+                        user[Users.id],
+                        user[Users.sid],
+                        user[Users.name],
                         user[Users.createdAt].toString(),
                         user[Users.updatedAt].toString()
                 )
