@@ -103,6 +103,103 @@
 			"response": []
 		},
 		{
+			"name": "Create user 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "268da9fc-4225-48fb-9229-5b8e7c678b0f",
+						"type": "text/javascript",
+						"exec": [
+							"function mkseed() {",
+							"    var text = \"\";",
+							"    var possible = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for (var i = 0; i < 16; i++)",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"pm.globals.set(\"user2_sid\", mkseed());",
+							"pm.globals.set(\"user2_name\", mkseed());",
+							"pm.globals.set(\"user2_pass\", mkseed());"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "12a30dae-c4af-41a0-ac41-d055948277a2",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"id\", \"sid\", \"name\", \"created_at\", \"updated_at\"],",
+							"  \"properties\": {",
+							"    \"id\": { \"type\": \"string\" },",
+							"    \"sid\": { \"type\": \"string\" },",
+							"    \"name\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" },",
+							"    \"updated_at\": { \"type\": \"string\" },",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_sid = pm.globals.get(\"user1_sid\");",
+							"    const user1_name = pm.globals.get(\"user1_name\");",
+							"    ",
+							"    pm.expect(res.sid === user1_sid).to.be.true;",
+							"    pm.expect(res.name === user1_name).to.be.true;",
+							"    pm.expect(res.created_at === res.updated_at).to.be.true;",
+							"});",
+							"",
+							"pm.globals.set(\"user2_id\", res.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{user2_sid}}\",\n\t\"name\": \"{{user2_name}}\",\n\t\"pass\": \"{{user2_pass}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get token for 'USER1'",
 			"event": [
 				{
@@ -175,7 +272,316 @@
 			"response": []
 		},
 		{
-			"name": "Create group 'GROUP1'",
+			"name": "Get token for 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "bc9bb57f-be60-4640-9ec4-28d8c82ae278",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"token\"],",
+							"  \"properties\": {",
+							"    \"token\": { \"type\": \"string\" },",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.globals.set(\"user2_token\", res.token);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{user2_sid}}\",\n\t\"pass\": \"{{user2_pass}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/token",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create group 'GROUP1' with 'USER1' without token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ba9ad609-19ba-47bd-9cff-e21c1dc690b5",
+						"type": "text/javascript",
+						"exec": [
+							"function mkseed() {",
+							"    var text = \"\";",
+							"    var possible = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for (var i = 0; i < 16; i++)",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"pm.globals.set(\"group1_sid\", mkseed());",
+							"pm.globals.set(\"group1_name\", mkseed());"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a302ef04-59fd-4e2a-bd69-93b9b77c3c63",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 403;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{group1_sid}}\",\n\t\"name\": \"{{group1_name}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/groups",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"groups"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create group 'GROUP1' with 'USER1' with token without sid",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ba9ad609-19ba-47bd-9cff-e21c1dc690b5",
+						"type": "text/javascript",
+						"exec": [
+							"function mkseed() {",
+							"    var text = \"\";",
+							"    var possible = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for (var i = 0; i < 16; i++)",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"pm.globals.set(\"group1_sid\", mkseed());",
+							"pm.globals.set(\"group1_name\", mkseed());"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "77b620da-fa9a-4001-b258-2aa0fa434e94",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 400;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"{{group1_name}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/groups",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"groups"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create group 'GROUP1' with 'USER1' with token without name",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ba9ad609-19ba-47bd-9cff-e21c1dc690b5",
+						"type": "text/javascript",
+						"exec": [
+							"function mkseed() {",
+							"    var text = \"\";",
+							"    var possible = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for (var i = 0; i < 16; i++)",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"pm.globals.set(\"group1_sid\", mkseed());",
+							"pm.globals.set(\"group1_name\", mkseed());"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "97bedbea-64ba-4ead-b935-f8df4c8a6124",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 400;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{group1_sid}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/groups",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"groups"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create group 'GROUP1' with 'USER1' with token",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -265,7 +671,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"sid\": \"{{user1_sid}}\",\n\t\"name\": \"{{user1_name}}\"\n}"
+					"raw": "{\n\t\"sid\": \"{{group1_sid}}\",\n\t\"name\": \"{{group1_name}}\"\n}"
 				},
 				"url": {
 					"raw": "{{SCHEME}}://{{HOST}}/groups",
@@ -281,7 +687,200 @@
 			"response": []
 		},
 		{
-			"name": "Delete group 'Group1'",
+			"name": "Delete group 'GROUP1' with 'USER2' without token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "251b16cd-e58d-46f4-8ff1-3aaa0c3eebe4",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 403;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/groups/{{group1_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"groups",
+						"{{group1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete group 'GROUP1' with 'USER2' with token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "902da55c-7b1b-4e09-ab99-a432bc691c20",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 400;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/groups/{{group1_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"groups",
+						"{{group1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete group 'GROUP1' with 'USER1' without token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a89d3c71-b7ed-4fb7-a77f-c18431a17933",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 403;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/groups/{{group1_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"groups",
+						"{{group1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete group 'GROUP1' with 'USER1' with token",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -389,6 +988,181 @@
 						{
 							"key": "token",
 							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/users/{{user1_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"users",
+						"{{user1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create group 'GROUP2' with 'USER2' with token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "83b80e31-e3e3-4acd-8220-19ed08a4296c",
+						"type": "text/javascript",
+						"exec": [
+							"function mkseed() {",
+							"    var text = \"\";",
+							"    var possible = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for (var i = 0; i < 16; i++)",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"pm.globals.set(\"group2_sid\", mkseed());",
+							"pm.globals.set(\"group2_name\", mkseed());"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "7e0cd653-21be-44c0-b5d3-6c6de725229f",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"id\", \"sid\", \"name\", \"owner\", \"created_at\", \"updated_at\"],",
+							"  \"properties\": {",
+							"    \"id\": { \"type\": \"string\" },",
+							"    \"sid\": { \"type\": \"string\" },",
+							"    \"name\": { \"type\": \"string\" },",
+							"    \"owner\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" },",
+							"    \"updated_at\": { \"type\": \"string\" },",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user1_sid = pm.globals.get(\"user1_sid\");",
+							"    const user1_name = pm.globals.get(\"user1_name\");",
+							"    ",
+							"    pm.expect(res.sid === user1_sid).to.be.true;",
+							"    pm.expect(res.name === user1_name).to.be.true;",
+							"    pm.expect(res.owner === user1_id).to.be.true;",
+							"    pm.expect(res.created_at === res.updated_at).to.be.true;",
+							"});",
+							"",
+							"pm.globals.set(\"group2_id\", res.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{group2_sid}}\",\n\t\"name\": \"{{group2_name}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/groups",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"groups"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user 'USER2' without deletion of 'GROUP2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "994c769a-718f-4d3d-a96d-4872feeaaa73",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
 							"type": "string"
 						}
 					]
