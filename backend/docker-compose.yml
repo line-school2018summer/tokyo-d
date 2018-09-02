@@ -1,5 +1,12 @@
 version: '3.1'
 services:
+    mq:
+        image: nats:latest
+        restart: always
+        ports:
+            - 4222:4222
+            - 9002:8222
+
     db:
         image: mysql:latest
         restart: always
