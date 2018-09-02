@@ -17,18 +17,28 @@ import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 import com.zaxxer.hikari.HikariDataSource
 import com.zaxxer.hikari.HikariConfig
+import springfox.documentation.builders.ApiInfoBuilder
+import springfox.documentation.service.ApiInfo
+import springfox.documentation.service.Contact
 
 @Configuration
 @SpringBootApplication
 @EnableSwagger2
 class LineScApplication {
+
     @Bean
     fun api(): Docket {
+        ApiInfoBuilder()
+        val info: ApiInfo = ApiInfoBuilder()
+                .title("TRIO API")
+                .description("This documentation is for TRIO.")
+                .build()
         return Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
+                .apiInfo(info)
     }
 
     @Bean
