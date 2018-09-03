@@ -8,6 +8,10 @@ import com.proelbtn.linesc.request.CreateUserRequest
 import com.proelbtn.linesc.response.UserResponse
 import com.proelbtn.linesc.model.Users
 import com.proelbtn.linesc.validator.validate_id
+import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiParam
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.or
@@ -15,6 +19,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.web.bind.annotation.*
@@ -23,9 +28,23 @@ import java.util.*
 @RestController
 class UsersController {
     @PostMapping(
-            "/users"
+            value = "/users",
+            produces = [ APPLICATION_JSON_VALUE ]
     )
-    fun createUserInformation(@RequestBody req: CreateUserRequest): ResponseEntity<UserResponse> {
+    @ApiOperation(
+            value = "ユーザの作成用",
+            notes = "ユーザを作成するのに使用するエンドポイント",
+            response = UserResponse::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse( code = 200, message = "正常にユーザを作成できた。" )),
+                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+            ]
+    )
+    fun createUserInformation(
+            @ApiParam(value = "作成したいユーザの情報") @RequestBody req: CreateUserRequest
+                ): ResponseEntity<UserResponse> {
         var message: UserResponse? = null
         var status: HttpStatus = HttpStatus.OK
 
@@ -66,29 +85,38 @@ class UsersController {
     }
 
     @GetMapping(
-            "/users/{id}"
+            value = "/users/{id}",
+            produces = [ APPLICATION_JSON_VALUE ]
     )
-    fun getUserInformation(@PathVariable("id") id: String): ResponseEntity<UserResponse> {
+    @ApiOperation(
+            value = "ユーザの取得用",
+            notes = "ユーザを取得するのに使用するエンドポイント",
+            response = UserResponse::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse( code = 200, message = "正常にユーザを取得できた。" )),
+                (ApiResponse( code = 400, message = "取得するユーザが存在しなかった。"))
+            ]
+    )
+    fun getUserInformation(
+            @ApiParam(value = "ユーザのID") @PathVariable("id") id: UUID
+                ): ResponseEntity<UserResponse> {
         var message: UserResponse? = null
         var status: HttpStatus = HttpStatus.OK
 
-        // validation
-        if (!validate_id(id)) status = HttpStatus.BAD_REQUEST
-
         // operation
-        if (status == HttpStatus.OK) {
-            val user = transaction { Users.select { Users.id eq UUID.fromString(id) }.firstOrNull() }
+        val user = transaction { Users.select { Users.id eq id }.firstOrNull() }
 
-            if (user == null) status = HttpStatus.NOT_FOUND
-            else {
-                message = UserResponse(
-                        user[Users.id],
-                        user[Users.sid],
-                        user[Users.name],
-                        user[Users.createdAt].toString(),
-                        user[Users.updatedAt].toString()
-                )
-            }
+        if (user == null) status = HttpStatus.NOT_FOUND
+        else {
+            message = UserResponse(
+                    user[Users.id],
+                    user[Users.sid],
+                    user[Users.name],
+                    user[Users.createdAt].toString(),
+                    user[Users.updatedAt].toString()
+            )
         }
 
         return ResponseEntity(message, status)
@@ -96,10 +124,25 @@ class UsersController {
 
     @Authentication
     @DeleteMapping(
-            "/users/{id}"
+            value = "/users/{id}",
+            produces = [ APPLICATION_JSON_VALUE ]
     )
-    fun deleteUserInformation(@RequestAttribute("user") user: UUID,
-                              @PathVariable("id") id: UUID): ResponseEntity<Unit> {
+    @ApiOperation(
+            value = "ユーザの削除用",
+            notes = "ユーザを削除するのに使用するエンドポイント",
+            response = UserResponse::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse( code = 200, message = "正常にユーザを削除できた。" )),
+                (ApiResponse( code = 400, message = "引数が足りない・正しくない。")),
+                (ApiResponse( code = 404, message = "削除するべきユーザが存在しなかった。"))
+            ]
+    )
+    fun deleteUserInformation(
+            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
+            @ApiParam("ユーザのID") @PathVariable("id") id: UUID
+                ): ResponseEntity<Unit> {
         var status: HttpStatus = HttpStatus.OK
 
         // validation
@@ -114,7 +157,7 @@ class UsersController {
                 Users.deleteWhere { Users.id eq id }
             }
 
-            if (count == 0) status = HttpStatus.BAD_REQUEST
+            if (count == 0) status = HttpStatus.NOT_FOUND
         }
 
         return ResponseEntity(status)

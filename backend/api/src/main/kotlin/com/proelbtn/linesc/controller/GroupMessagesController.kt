@@ -7,6 +7,7 @@ import com.proelbtn.linesc.model.UserMessages
 import com.proelbtn.linesc.request.CreateMessageRequest
 import com.proelbtn.linesc.response.MessageResponse
 import com.proelbtn.linesc.validator.validate_id
+import io.swagger.annotations.*
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
@@ -25,8 +26,20 @@ class GroupMessagesController {
     @PostMapping(
             "/messages/groups"
     )
-    fun createGroupMessage(@RequestAttribute("user") user: String,
-                          @RequestBody req: CreateMessageRequest): ResponseEntity<Unit> {
+    @ApiOperation(
+            value = "グループメッセージの投稿用",
+            notes = "グループメッセージを投稿するのに使用するエンドポイント",
+            response = Unit::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse(code = 200, message = "正常にグループメッセージが投稿できた。")),
+                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+           ]
+    )
+    fun createGroupMessage(
+            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String,
+            @ApiParam(value = "作成するグループメッセージの情報") @RequestBody req: CreateMessageRequest): ResponseEntity<Unit> {
         var status = HttpStatus.OK
 
         // validation
@@ -60,15 +73,28 @@ class GroupMessagesController {
     @GetMapping(
             "/messages/groups/"
     )
-    fun getGroupMessage(@RequestAttribute("user") user: UUID,
-                        @RequestParam("t") to: UUID,
-                        @RequestParam("a", required = false) after: String?): ResponseEntity<List<MessageResponse>> {
+    @ApiOperation(
+            value = "グループメッセージの取得用",
+            notes = "グループメッセージを取得するのに使用するエンドポイント",
+            response = Unit::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse(code = 200, message = "正常にメッセージが取得できた。")),
+                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+            ]
+    )
+    fun getGroupMessage(
+            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
+            @ApiParam(value = "送信先のグループのID") @RequestParam("t") to: UUID,
+            @ApiParam(value = "この時間以降に作成されたグループメッセージを取得する。") @RequestParam("a", required = false) after: String?
+                ): ResponseEntity<List<MessageResponse>> {
         var status: HttpStatus = HttpStatus.OK
 
         // operation
         var messages = transaction { UserGroupMessages.select {
-            UserGroupMessages.to eq to
-        }.orderBy(Pair(UserGroupMessages.createdAt, SortOrder.DESC)).toList()
+                UserGroupMessages.to eq to
+            }.orderBy(Pair(UserGroupMessages.createdAt, SortOrder.DESC)).toList()
         }
 
         // object mapping

@@ -5,6 +5,7 @@ import com.proelbtn.linesc.request.CreateRelationRequest
 import com.proelbtn.linesc.response.RelationResponse
 import com.proelbtn.linesc.model.UserRelations
 import com.proelbtn.linesc.validator.validate_id
+import io.swagger.annotations.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -19,8 +20,21 @@ class UserRelationsController {
     @PostMapping(
             "/relations/users"
     )
-    fun createUserRelation(@RequestAttribute("user") user: String,
-                            @RequestBody req: CreateRelationRequest): ResponseEntity<RelationResponse> {
+    @ApiOperation(
+            value = "ユーザ間の関係の作成用",
+            notes = "ユーザ間の関係を作成するときに使用するエンドポイント",
+            response = RelationResponse::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse(code = 200, message = "正常にユーザ間の関係を作成できた。")),
+                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+            ]
+    )
+    fun createUserRelation(
+            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String,
+            @ApiParam(value = "作成するユーザ間の関係の情報") @RequestBody req: CreateRelationRequest
+                ): ResponseEntity<RelationResponse> {
         var res: RelationResponse? = null
         var status: HttpStatus = HttpStatus.OK
 
@@ -63,7 +77,20 @@ class UserRelationsController {
     @GetMapping(
             "/relations/users"
     )
-    fun getUserRelations(@RequestAttribute("user") user: String): ResponseEntity<List<RelationResponse>> {
+    @ApiOperation(
+            value = "ユーザ間の関係の取得用",
+            notes = "ユーザ間の関係を取得するときに使用するエンドポイント",
+            response = RelationResponse::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse( code = 200, message = "正常にユーザ間の関係を取得できた。")),
+                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+            ]
+    )
+    fun getUserRelations(
+            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String
+                ): ResponseEntity<List<RelationResponse>> {
         var res: List<RelationResponse>? = null
         var status: HttpStatus = HttpStatus.OK
 
@@ -92,8 +119,21 @@ class UserRelationsController {
     @GetMapping(
             "/relations/users/{id}"
     )
-    fun getUserRelation(@RequestAttribute("user") user: String,
-                         @PathVariable("id") id: String): ResponseEntity<RelationResponse> {
+    @ApiOperation(
+            value = "ユーザ間の関係の取得用",
+            notes = "ユーザ間の関係を取得するときに使用するエンドポイント",
+            response = RelationResponse::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse( code = 200, message = "正常にユーザ間の関係を取得できた。")),
+                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+            ]
+    )
+    fun getUserRelation(
+            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String,
+            @ApiParam(value = "関係先のユーザのID") @PathVariable("id") id: String
+                ): ResponseEntity<RelationResponse> {
         var res: RelationResponse? = null
         var status: HttpStatus = HttpStatus.OK
 
@@ -126,8 +166,22 @@ class UserRelationsController {
     @DeleteMapping(
             "/relations/users/{id}"
     )
-    fun deleteUserRelation(@RequestAttribute("user") user: String,
-                            @PathVariable id: String): ResponseEntity<Unit> {
+    @ApiOperation(
+            value = "ユーザ間の関係の削除用",
+            notes = "ユーザ間の関係を削除するときに使用するエンドポイント",
+            response = RelationResponse::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse( code = 200, message = "正常にユーザ間の関係を削除できた。")),
+                (ApiResponse( code = 400, message = "引数が足りない・正しくない。")),
+                (ApiResponse( code = 404, message = "削除すべきユーザ間の関係がなかった。"))
+            ]
+    )
+    fun deleteUserRelation(
+            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String,
+            @ApiParam(value = "関係先のユーザのID") @PathVariable id: String
+                ): ResponseEntity<Unit> {
         var status = HttpStatus.OK
 
         if (!validate_id(user) || !validate_id(id)) status = HttpStatus.BAD_REQUEST
@@ -142,7 +196,7 @@ class UserRelationsController {
                 }
             }
 
-            if (count == 0) status = HttpStatus.BAD_REQUEST
+            if (count == 0) status = HttpStatus.NOT_FOUND
         }
 
         return ResponseEntity(status)

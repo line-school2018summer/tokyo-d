@@ -5,6 +5,7 @@ import com.proelbtn.linesc.request.CreateGroupRequest
 import com.proelbtn.linesc.response.GroupResponse
 import com.proelbtn.linesc.model.UserGroups
 import com.proelbtn.linesc.validator.validate_id
+import io.swagger.annotations.*
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -22,8 +23,21 @@ class GroupsController {
     @PostMapping(
             "/groups"
     )
-    fun createGroupsInformation(@RequestAttribute("user") user: String,
-                                @RequestBody req: CreateGroupRequest): ResponseEntity<GroupResponse> {
+    @ApiOperation(
+            value = "グループの作成用",
+            notes = "グループを作成するのに使用するエンドポイント",
+            response = GroupResponse::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse( code = 200, message = "正常にグループを作成できた。")),
+                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+            ]
+    )
+    fun createGroupsInformation(
+            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String,
+            @ApiParam(value = "作成するグループの情報") @RequestBody req: CreateGroupRequest
+                ): ResponseEntity<GroupResponse> {
         var res: GroupResponse? = null
         var status: HttpStatus = HttpStatus.OK
 
@@ -64,7 +78,9 @@ class GroupsController {
     @GetMapping(
             "/groups/{id}"
     )
-    fun getGroupInformation(@PathVariable("id") id: String): ResponseEntity<GroupResponse> {
+    fun getGroupInformation(
+            @ApiParam(value = "グループのID") @PathVariable("id") id: String
+                ): ResponseEntity<GroupResponse> {
         var message: GroupResponse? = null
         var status: HttpStatus = HttpStatus.OK
 
@@ -95,8 +111,10 @@ class GroupsController {
     @DeleteMapping(
             "/groups/{id}"
     )
-    fun deleteGroupInformation(@RequestAttribute("user") user: String,
-                                     @PathVariable("id") id: String): ResponseEntity<Unit> {
+    fun deleteGroupInformation(
+            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String,
+            @ApiParam(value = "グループのID") @PathVariable("id") id: String
+                ): ResponseEntity<Unit> {
         var status: HttpStatus = HttpStatus.OK
 
         // validation
