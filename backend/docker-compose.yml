@@ -21,7 +21,7 @@ services:
             - 9000:8080
 
     kvs:
-        image: redis:latest
+        image: redis:4.0
         restart: always
         ports:
             - 6379:6379
