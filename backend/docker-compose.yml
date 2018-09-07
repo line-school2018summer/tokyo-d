@@ -1,0 +1,34 @@
+version: '3.1'
+services:
+    mq:
+        image: nats:latest
+        restart: always
+        ports:
+            - 4222:4222
+            - 9002:8222
+
+    db:
+        image: mysql:latest
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: lineschool
+        ports:
+            - 3306:3306
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 9000:8080
+
+    kvs:
+        image: redis:4.0
+        restart: always
+        ports:
+            - 6379:6379
+    commander:
+        image: rediscommander/redis-commander
+        restart: always
+        environment:
+            REDIS_HOSTS: kvs
+        ports:
+            - 9001:8081 
