@@ -1,7 +1,7 @@
 package com.example.toshiki.pusherchat
 
 data class User (
-    var user: String,
+    var name: String,
     var pass: String,
     var sid: String
 )

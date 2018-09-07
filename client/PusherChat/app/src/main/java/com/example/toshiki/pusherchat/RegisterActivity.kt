@@ -19,6 +19,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.POST
 import retrofit2.http.Body
 import java.util.*
+import com.google.gson.JsonObject
+
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -46,26 +48,32 @@ class RegisterActivity : AppCompatActivity() {
                         email
                 )
 
+
                 val call = UserRegister.create().postUserRegister(userRegister)
 
-                call.execute()
+                call.enqueue(object : Callback<Identification> {
+                    override fun onResponse(call: Call<Identification>, response: Response<Identification>) {
+                        if (!response.isSuccessful) {
+                            Toast.makeText(applicationContext,"Response was not successful", Toast.LENGTH_SHORT).show()
+                        } else {
+                            val res = response.body()
 
-//                call.enqueue(object : Callback<Void> {
-//                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
-//                        if (!response.isSuccessful) {
-//                            Toast.makeText(applicationContext, "Response was not successful", Toast.LENGTH_SHORT).show()
-//
-//
-//                        } else {
-//                            App.user = user
-//                            startActivity(Intent(this@RegisterActivity, HomeActivity::class.java))
-//                        }
-//                    }
-//
-//                    override fun onFailure(call: Call<Void>, t: Throwable) {
-//                        Toast.makeText(applicationContext,"Error when calling the service", Toast.LENGTH_SHORT).show()
-//                    }
-//                })
+                            Log.d("Registration", res.toString())
+                            Log.d("Registration", res!!.component1())
+                            Log.d("Registration", res!!.component2())
+                            Log.d("Registration", res!!.component3())
+                            Log.d("Registration", res!!.component4())
+                            Log.d("Registration", res!!.component5())
+
+                            startActivity(Intent( this@RegisterActivity, HomeActivity::class.java))
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Identification>, t: Throwable) {
+                        Toast.makeText(applicationContext,"Error when calling the service", Toast.LENGTH_SHORT).show()
+                    }
+                })
+
 
             } else {
                 Toast.makeText(applicationContext,"Username should not be empty", Toast.LENGTH_SHORT).show()
