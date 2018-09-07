@@ -1,17 +1,24 @@
 package com.example.toshiki.pusherchat
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_register.*
 import android.content.Intent
+import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.POST
 import retrofit2.http.Body
+import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -33,10 +40,32 @@ class RegisterActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext,"Password is not same", Toast.LENGTH_SHORT).show()
                 }
 
+                val userRegister = User(
+                        user,
+                        password,
+                        email
+                )
 
+                val call = UserRegister.create().postUserRegister(userRegister)
 
-                App.user = user
-                startActivity(Intent(this@RegisterActivity, HomeActivity::class.java))
+                call.execute()
+
+//                call.enqueue(object : Callback<Void> {
+//                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+//                        if (!response.isSuccessful) {
+//                            Toast.makeText(applicationContext, "Response was not successful", Toast.LENGTH_SHORT).show()
+//
+//
+//                        } else {
+//                            App.user = user
+//                            startActivity(Intent(this@RegisterActivity, HomeActivity::class.java))
+//                        }
+//                    }
+//
+//                    override fun onFailure(call: Call<Void>, t: Throwable) {
+//                        Toast.makeText(applicationContext,"Error when calling the service", Toast.LENGTH_SHORT).show()
+//                    }
+//                })
 
             } else {
                 Toast.makeText(applicationContext,"Username should not be empty", Toast.LENGTH_SHORT).show()

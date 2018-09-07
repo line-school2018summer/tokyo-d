@@ -19,6 +19,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".RegisterActivity"
+            android:label="RegisterActivity">
+        </activity>
+        <activity
             android:name=".ChatActivity"
             android:label="ChatActivity">
         </activity>
