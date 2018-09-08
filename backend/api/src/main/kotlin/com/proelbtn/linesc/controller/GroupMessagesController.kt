@@ -73,7 +73,7 @@ class GroupMessagesController {
 
     @Authentication
     @GetMapping(
-            "/messages/groups/"
+            "/messages/groups"
     )
     @ApiOperation(
             value = "グループメッセージの取得用",
