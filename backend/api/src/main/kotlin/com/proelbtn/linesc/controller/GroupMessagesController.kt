@@ -55,13 +55,15 @@ class GroupMessagesController {
 
         // operation
         if (status == HttpStatus.OK) {
+            val id = UUID.randomUUID()
             val now = DateTime.now()
 
             transaction { UserGroupMessages.insert {
-                    it[from] = fid
-                    it[to] = tid
-                    it[content] = req.content
-                    it[createdAt] = now
+                    it[UserGroupMessages.id] = id
+                    it[UserGroupMessages.from] = fid
+                    it[UserGroupMessages.to] = tid
+                    it[UserGroupMessages.content] = req.content
+                    it[UserGroupMessages.createdAt] = now
                 }
             }
         }
@@ -100,9 +102,11 @@ class GroupMessagesController {
         // object mapping
         var msg = messages.map {
             MessageResponse (
+                    it[UserGroupMessages.id],
                     it[UserGroupMessages.from],
                     it[UserGroupMessages.to],
-                    it[UserGroupMessages.content]
+                    it[UserGroupMessages.content],
+                    it[UserGroupMessages.createdAt].toString()
             )
         }
 

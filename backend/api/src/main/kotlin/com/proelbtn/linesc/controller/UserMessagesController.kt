@@ -61,13 +61,15 @@ class UserMessagesController {
 
         // operation
         if (status == HttpStatus.OK) {
+            val id = UUID.randomUUID()
             val now = DateTime.now()
 
             transaction { UserMessages.insert {
-                    it[from] = fid
-                    it[to] = tid
-                    it[content] = req.content
-                    it[createdAt] = now
+                    it[UserMessages.id] = id
+                    it[UserMessages.from] = fid
+                    it[UserMessages.to] = tid
+                    it[UserMessages.content] = req.content
+                    it[UserMessages.createdAt] = now
                 }
             }
         }
@@ -106,9 +108,11 @@ class UserMessagesController {
         // object mapping
         var msg = messages.map {
             MessageResponse (
-                it[UserMessages.from],
-                it[UserMessages.to],
-                it[UserMessages.content]
+                    it[UserMessages.id],
+                    it[UserMessages.from],
+                    it[UserMessages.to],
+                    it[UserMessages.content],
+                    it[UserMessages.createdAt].toString()
             )
         }
 
