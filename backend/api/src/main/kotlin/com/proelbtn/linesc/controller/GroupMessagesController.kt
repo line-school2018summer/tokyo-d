@@ -1,5 +1,6 @@
 package com.proelbtn.linesc.controller
 
+import com.google.common.primitives.UnsignedInteger
 import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.model.UserGroupMessages
 import com.proelbtn.linesc.model.UserGroupRelations
@@ -8,10 +9,8 @@ import com.proelbtn.linesc.request.CreateMessageRequest
 import com.proelbtn.linesc.response.MessageResponse
 import com.proelbtn.linesc.validator.validate_id
 import io.swagger.annotations.*
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.apache.catalina.User
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
@@ -73,7 +72,7 @@ class GroupMessagesController {
 
     @Authentication
     @GetMapping(
-            "/messages/groups"
+            "/messages/groups/{id}"
     )
     @ApiOperation(
             value = "グループメッセージの取得用",
@@ -83,33 +82,65 @@ class GroupMessagesController {
     @ApiResponses(
             value = [
                 (ApiResponse(code = 200, message = "正常にメッセージが取得できた。")),
-                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+                (ApiResponse(code = 400, message = "引数が足りない・正しくない。"))
             ]
     )
     fun getGroupMessage(
+            @ApiParam(value = "取得したいトークのグループのID") @PathVariable("id") id: UUID,
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
-            @ApiParam(value = "送信先のグループのID") @RequestParam("t") to: UUID,
-            @ApiParam(value = "この時間以降に作成されたグループメッセージを取得する。") @RequestParam("a", required = false) after: String?
+            @ApiParam(value = "このメッセージID以降に送信されたメッセージを取得する", required = false) @RequestParam("since_id", required = false) sinceId: UUID?,
+            @ApiParam(value = "このメッセージID以前に送信されたメッセージを取得する", required = false) @RequestParam("max_id", required = false) maxId: UUID?,
+            @ApiParam(value = "取得するメッセージの件数（最大100件）", required = false, defaultValue = "20") @RequestParam("count", required = false, defaultValue = "20") count: Int = 20
                 ): ResponseEntity<List<MessageResponse>> {
+        var response: List<MessageResponse>? = null
         var status: HttpStatus = HttpStatus.OK
 
-        // operation
-        var messages = transaction { UserGroupMessages.select {
-                UserGroupMessages.to eq to
-            }.orderBy(Pair(UserGroupMessages.createdAt, SortOrder.DESC)).toList()
-        }
+        if (count < 0 || count > 100) status = HttpStatus.NOT_FOUND
 
-        // object mapping
-        var msg = messages.map {
-            MessageResponse (
+        val query: Query? =
+                if (sinceId == null && maxId == null) {
+                    transaction {
+                        UserGroupMessages.selectAll()
+                                .orderBy(UserGroupMessages.createdAt).limit(count)
+                    }
+                }
+                else if (sinceId == null && maxId != null) {
+                    transaction {
+                        val maxDate = UserGroupMessages.select {
+                            UserGroupMessages.id eq maxId
+                        }.firstOrNull()?.get(UserGroupMessages.createdAt)
+
+                        if (maxDate == null) null
+                        else UserGroupMessages.select {
+                            UserGroupMessages.createdAt less maxDate
+                        }.orderBy(UserGroupMessages.createdAt).limit(count)
+                    }
+                }
+                else if (sinceId != null && maxId == null) {
+                    transaction {
+                        val sinceDate = UserGroupMessages.select {
+                            UserGroupMessages.id eq sinceId
+                        }.firstOrNull()?.get(UserGroupMessages.createdAt)
+
+                        if (sinceDate == null) null
+                        else UserGroupMessages.select {
+                            UserGroupMessages.createdAt greater sinceDate
+                        }.orderBy(UserGroupMessages.createdAt, isAsc = true).limit(count)
+                    }
+                }
+                else null
+
+        if (query == null) status = HttpStatus.BAD_REQUEST
+        else {
+            response = query.map { MessageResponse(
                     it[UserGroupMessages.id],
                     it[UserGroupMessages.from],
                     it[UserGroupMessages.to],
                     it[UserGroupMessages.content],
                     it[UserGroupMessages.createdAt].toString()
-            )
+            ) }
         }
 
-        return ResponseEntity(msg, status)
+        return ResponseEntity(response, status)
     }
 }

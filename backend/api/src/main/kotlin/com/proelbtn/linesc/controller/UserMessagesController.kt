@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
@@ -91,31 +88,62 @@ class UserMessagesController {
                 (ApiResponse(code = 200, message = "正常にユーザメッセージを取得できた。"))
             ]
     )
-    fun getUserMessage(
+    fun getGroupMessage(
+            @ApiParam(value = "取得したいトークのユーザのID") @PathVariable("id") id: UUID,
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
-            @ApiParam(value = "送信元のユーザのID") @RequestParam("f") from: UUID,
-            @ApiParam(value = "送信先のユーザのID") @RequestParam("t") to: UUID,
-            @ApiParam(value = "この時間以降に作成されたユーザメッセージを取得する。") @RequestParam("a", required = false) after: String?
-                ): ResponseEntity<List<MessageResponse>> {
+            @ApiParam(value = "このメッセージID以降に送信されたメッセージを取得する", required = false) @RequestParam("since_id", required = false) sinceId: UUID?,
+            @ApiParam(value = "このメッセージID以前に送信されたメッセージを取得する", required = false) @RequestParam("max_id", required = false) maxId: UUID?,
+            @ApiParam(value = "取得するメッセージの件数（最大100件）", required = false, defaultValue = "20") @RequestParam("count", required = false, defaultValue = "20") count: Int = 20
+    ): ResponseEntity<List<MessageResponse>> {
+        var response: List<MessageResponse>? = null
         var status: HttpStatus = HttpStatus.OK
 
-        // operation
-        var messages = transaction { UserMessages.select {
-                (UserMessages.from eq from) and (UserMessages.to eq to)
-            }.orderBy(Pair(UserMessages.createdAt, SortOrder.DESC)).toList()
-        }
+        if (count < 0 || count > 100) status = HttpStatus.NOT_FOUND
 
-        // object mapping
-        var msg = messages.map {
-            MessageResponse (
+        val query: Query? =
+                if (sinceId == null && maxId == null) {
+                    transaction {
+                        UserMessages.selectAll()
+                                .orderBy(UserMessages.createdAt).limit(count)
+                    }
+                }
+                else if (sinceId == null && maxId != null) {
+                    transaction {
+                        val maxDate = UserMessages.select {
+                            UserMessages.id eq maxId
+                        }.firstOrNull()?.get(UserMessages.createdAt)
+
+                        if (maxDate == null) null
+                        else UserMessages.select {
+                            UserMessages.createdAt less maxDate
+                        }.orderBy(UserMessages.createdAt).limit(count)
+                    }
+                }
+                else if (sinceId != null && maxId == null) {
+                    transaction {
+                        val sinceDate = UserMessages.select {
+                            UserMessages.id eq sinceId
+                        }.firstOrNull()?.get(UserMessages.createdAt)
+
+                        if (sinceDate == null) null
+                        else UserMessages.select {
+                            UserMessages.createdAt greater sinceDate
+                        }.orderBy(UserMessages.createdAt, isAsc = true).limit(count)
+                    }
+                }
+                else null
+
+        if (query == null) status = HttpStatus.BAD_REQUEST
+        else {
+            response = query.map { MessageResponse(
                     it[UserMessages.id],
                     it[UserMessages.from],
                     it[UserMessages.to],
                     it[UserMessages.content],
                     it[UserMessages.createdAt].toString()
-            )
+            ) }
         }
 
-        return ResponseEntity(msg, status)
+        return ResponseEntity(response, status)
     }
 }
