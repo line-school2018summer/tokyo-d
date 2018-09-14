@@ -9,8 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.proelbtn.linesc.R
+import com.proelbtn.linesc.presenters.HomePresenter
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), HomePresenter.View {
+    val presenter = HomePresenter(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
