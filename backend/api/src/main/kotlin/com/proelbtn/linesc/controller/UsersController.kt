@@ -120,8 +120,7 @@ class UsersController {
     @ApiResponses(
             value = [
                 (ApiResponse(code = 200, message = "正常にユーザを削除できた。" )),
-                (ApiResponse(code = 400, message = "引数が足りない・正しくない。")),
-                (ApiResponse(code = 404, message = "削除するべきユーザが存在しなかった。"))
+                (ApiResponse(code = 403, message = "削除する権限がないかユーザが存在しない。"))
             ]
     )
     @ResponseStatus(HttpStatus.OK)
@@ -130,7 +129,7 @@ class UsersController {
             @ApiParam("ユーザのID") @PathVariable("id") id: UUID
                 ) {
         // validation
-        if (user != id) throw BadRequestException()
+        if (user != id) throw ForbiddenException()
 
         // operation
         val count = transaction {
@@ -140,6 +139,6 @@ class UsersController {
             Users.deleteWhere { Users.id eq id }
         }
 
-        if (count == 0) throw NotFoundException()
+        if (count == 0) throw ForbiddenException()
     }
 }

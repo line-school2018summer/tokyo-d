@@ -338,10 +338,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "e823fcb7-c684-4fc5-8378-abd0df88abf1",
+						"id": "756f3d50-5d7e-4e4e-91e8-bb899c9a8c58",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 400;",
+							"const statusCode = 403;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -525,7 +525,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "369bdff3-21eb-42f9-9175-4cb280265dcd",
+						"id": "8988d0d8-d738-48c1-9e30-11cb9c359036",
 						"type": "text/javascript",
 						"exec": [
 							"const statusCode = 400;",
@@ -1000,10 +1000,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "d1d8f47e-70bb-42ee-ac45-52fd09ba43fc",
+						"id": "41c7d19f-c716-4bac-9b49-fcdbd41c8886",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 403;",
+							"const statusCode = 401;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -1131,10 +1131,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "ca3f5a4a-a0bf-4567-b92f-94f30d01461d",
+						"id": "a66a7180-7243-4948-a007-4f9fb9b9ee6a",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 400;",
+							"const statusCode = 403;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",

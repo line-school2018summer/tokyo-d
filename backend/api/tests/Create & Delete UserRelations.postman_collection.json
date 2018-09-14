@@ -257,10 +257,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "1cb4b23b-da3f-4b93-ae70-39557f08ee20",
+						"id": "e46d8e13-f14a-4ecd-b485-bd5b1dc6f73c",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 403;",
+							"const statusCode = 401;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -727,7 +727,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "64411fba-f1b6-4799-8eb5-7b57507383dc",
+						"id": "d0228ae1-9e54-43f7-a8a8-6700fd1574f8",
 						"type": "text/javascript",
 						"exec": [
 							"const statusCode = 200;",
@@ -749,7 +749,7 @@
 							"const res = JSON.parse(responseBody);",
 							"",
 							"pm.test('Schema is valid', function() {",
-							"    pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
 							"});",
 							"",
 							"pm.test(\"Parameter Constraints meets\", function() {",
@@ -816,18 +816,37 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "afb71814-8860-4295-a895-3b6459ac787e",
+						"id": "2a69cfb3-e2e0-44a1-b023-76fdc75031f8",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 404;",
+							"const statusCode = 200;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
 							"    });",
 							"}",
 							"",
-							"pm.test('the length of response is 0', function() {",
-							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res.from === user1_id).to.be.true;",
+							"    pm.expect(res.to === user2_id).to.be.true;",
 							"});"
 						]
 					}
@@ -1146,7 +1165,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "64411fba-f1b6-4799-8eb5-7b57507383dc",
+						"id": "1b54eb21-d26b-4365-b9d8-521b859813f0",
 						"type": "text/javascript",
 						"exec": [
 							"const statusCode = 200;",
@@ -1168,7 +1187,7 @@
 							"const res = JSON.parse(responseBody);",
 							"",
 							"pm.test('Schema is valid', function() {",
-							"    pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
 							"});",
 							"",
 							"pm.test(\"Parameter Constraints meets\", function() {",
@@ -1235,7 +1254,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "64411fba-f1b6-4799-8eb5-7b57507383dc",
+						"id": "b7ad7a4d-8ed9-488b-b5ea-f435899c3f99",
 						"type": "text/javascript",
 						"exec": [
 							"const statusCode = 200;",
@@ -1257,7 +1276,7 @@
 							"const res = JSON.parse(responseBody);",
 							"",
 							"pm.test('Schema is valid', function() {",
-							"    pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
 							"});",
 							"",
 							"pm.test(\"Parameter Constraints meets\", function() {",
@@ -1394,7 +1413,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "f97e3531-40b9-4675-9989-95bb1af27dff",
+						"id": "a0ee8ea4-7f9b-42a1-a307-9035c0d8904d",
 						"type": "text/javascript",
 						"exec": [
 							"const statusCode = 200;",
@@ -1426,8 +1445,8 @@
 							"    const user2_id = pm.globals.get(\"user2_id\");",
 							"    ",
 							"    pm.expect(res).to.have.lengthOf(1);",
-							"    pm.expect(res[0]).to.have.property('from', user1_id);",
-							"    pm.expect(res[0]).to.have.property('to', user2_id);",
+							"    pm.expect(res[0]).to.have.property('from', user2_id);",
+							"    pm.expect(res[0]).to.have.property('to', user1_id);",
 							"});"
 						]
 					}

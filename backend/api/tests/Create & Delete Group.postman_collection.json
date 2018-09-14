@@ -268,10 +268,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "4df0c180-b09e-4d28-bf7d-62739309ab55",
+						"id": "fd0d0b89-e126-41e9-95a2-8a5e82989732",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 403;",
+							"const statusCode = 401;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -593,10 +593,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "c7f5363c-8083-43e7-9065-9473b03478c5",
+						"id": "8ee07d89-2284-4b49-a4dc-f4a3791be653",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 403;",
+							"const statusCode = 401;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -655,10 +655,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "7318d2fb-d0b4-4e62-930d-ff1862bc8d92",
+						"id": "a1f7b5e9-76b3-484c-aa94-3dab0746fad4",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 400;",
+							"const statusCode = 403;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -724,10 +724,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "f9b7fea0-e97c-45b9-9df1-fb5222ab8b0a",
+						"id": "c4da31d3-d076-4e2a-9457-7257f5fe2720",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 403;",
+							"const statusCode = 401;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",

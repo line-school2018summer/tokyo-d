@@ -109,8 +109,7 @@ class GroupsController {
     @ApiResponses(
             value = [
                 (ApiResponse( code = 200, message = "正常にグループを削除できた。" )),
-                (ApiResponse( code = 400, message = "引数が足りない・正しくない。")),
-                (ApiResponse( code = 404, message = "削除するべきグループが存在しなかった。"))
+                (ApiResponse( code = 403, message = "権限がないか削除するべきグループが存在しない。"))
             ]
     )
     @ResponseStatus(HttpStatus.OK)
@@ -122,6 +121,6 @@ class GroupsController {
             UserGroups.deleteWhere { (UserGroups.id eq id) and (UserGroups.owner eq user) }
         }
 
-        if (count == 0) throw NotFoundException()
+        if (count == 0) throw ForbiddenException()
     }
 }

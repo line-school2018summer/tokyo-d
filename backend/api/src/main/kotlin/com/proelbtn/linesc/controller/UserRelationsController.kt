@@ -117,19 +117,19 @@ class UserRelationsController {
     fun getUserRelation(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
             @ApiParam(value = "関係先のユーザのID") @PathVariable("id") id: UUID
-                ): RelationResponse {
-        val rel = transaction { UserRelations.select {
-                (UserRelations.from eq user) and (UserRelations.to eq id)
-            }.firstOrNull()
+                ): List<RelationResponse> {
+        val query = transaction { UserRelations.select {
+            ((UserRelations.from eq user) and (UserRelations.to eq id)) or ((UserRelations.from eq id) and (UserRelations.to eq user))
+            }
         }
 
-        if (rel == null) throw NotFoundException()
-
-        return RelationResponse(
-                rel[UserRelations.from],
-                rel[UserRelations.to],
-                rel[UserRelations.createdAt].toString()
-        )
+        return query.map {
+            RelationResponse(
+                    it[UserRelations.from],
+                    it[UserRelations.to],
+                    it[UserRelations.createdAt].toString()
+            )
+        }
     }
 
 
