@@ -1,5 +1,6 @@
 package com.proelbtn.linesc.model.datainterface
 
+import com.proelbtn.linesc.Constants.retrofit
 import com.proelbtn.linesc.model.dataclass.PostUsers
 import com.proelbtn.linesc.model.dataclass.ResPostUsers
 import retrofit2.Call
@@ -13,14 +14,7 @@ interface UsersPost {
     fun postUsers(@Body body: PostUsers): Call<ResPostUsers>
 
     companion object {
-        private const val BASE_URL = "http://ec2-52-194-219-150.ap-northeast-1.compute.amazonaws.com/api/"
-
         fun create(): UsersPost {
-
-            val retrofit = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create())
-                    .build()
             return retrofit.create(UsersPost::class.java)
         }
     }

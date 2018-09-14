@@ -1,5 +1,6 @@
 package com.proelbtn.linesc.model.datainterface
 
+import com.proelbtn.linesc.Constants.retrofit
 import com.proelbtn.linesc.model.dataclass.PostRelationsGroups
 import com.proelbtn.linesc.model.dataclass.ResPostRelationsGroups
 import com.proelbtn.linesc.model.dataclass.ResPostToken
@@ -16,14 +17,7 @@ interface RelationsGroupsPost {
     fun postMessagesGroups(@Part("user") user: ResPostToken, @Part("req") req: PostRelationsGroups): Call<ResPostRelationsGroups>
 
     companion object {
-        private const val BASE_URL = "http://ec2-52-194-219-150.ap-northeast-1.compute.amazonaws.com/api/"
-
         fun create(): RelationsGroupsPost {
-
-            val retrofit = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create())
-                    .build()
             return retrofit.create(RelationsGroupsPost::class.java)
         }
     }

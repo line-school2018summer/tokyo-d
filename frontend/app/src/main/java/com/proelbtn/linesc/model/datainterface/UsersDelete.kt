@@ -1,5 +1,6 @@
 package com.proelbtn.linesc.model.datainterface
 
+import com.proelbtn.linesc.Constants.retrofit
 import com.proelbtn.linesc.model.dataclass.ResDeleteUsers
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -12,14 +13,7 @@ interface UsersDelete {
     fun deleteUsers(@Path("sid") sid: String): Call<ResDeleteUsers>
 
     companion object {
-        private const val BASE_URL = "http://ec2-52-194-219-150.ap-northeast-1.compute.amazonaws.com/api/"
-
         fun create(): UsersDelete {
-
-            val retrofit = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create())
-                    .build()
             return retrofit.create(UsersDelete::class.java)
         }
     }
