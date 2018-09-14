@@ -1,3 +1,5 @@
 package com.proelbtn.linesc.response
 
-class RelationResponse(val from: String, val to: String, val created_at: String)
+import java.util.*
+
+class RelationResponse(val from: UUID, val to: UUID, val created_at: String)

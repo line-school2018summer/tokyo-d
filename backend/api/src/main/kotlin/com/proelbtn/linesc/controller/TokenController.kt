@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import redis.clients.jedis.Jedis
 import java.util.*
@@ -38,6 +39,7 @@ class TokenController {
                 (ApiResponse(code = 403, message = "ユーザが存在しないかパスワードが間違っている。"))
             ]
     )
+    @ResponseStatus(HttpStatus.OK)
     fun getToken(
             @ApiParam(value = "トークンを取得したいユーザの認証情報") @RequestBody req: GetTokenRequest
                 ): TokenResponse {

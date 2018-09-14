@@ -49,14 +49,11 @@ class UsersController {
     fun createUserInformation(
             @ApiParam(value = "作成したいユーザの情報") @RequestBody req: CreateUserRequest
                 ): UserResponse {
-        // validate
-        if (!req.validate()) throw BadRequestException()
-
         // operation
         val id = UUID.randomUUID()
-        val sid = req.sid!!
-        val name = req.name!!
-        val pass = BCrypt.hashpw(req.pass!!, BCrypt.gensalt(8))
+        val sid = req.sid
+        val name = req.name
+        val pass = BCrypt.hashpw(req.pass, BCrypt.gensalt(8))
         val now = DateTime.now()
 
         transaction {

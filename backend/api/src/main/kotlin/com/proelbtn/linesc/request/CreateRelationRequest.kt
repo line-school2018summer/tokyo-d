@@ -1,9 +1,5 @@
 package com.proelbtn.linesc.request
 
-import com.proelbtn.linesc.validator.validate_id
+import java.util.*
 
-class CreateRelationRequest(val from: String, val to: String) {
-    fun validate(): Boolean {
-        return validate_id(from) && validate_id(to)
-    }
-}
+class CreateRelationRequest(val from: UUID, val to: UUID)

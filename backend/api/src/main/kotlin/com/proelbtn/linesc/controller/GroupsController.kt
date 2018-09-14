@@ -1,10 +1,11 @@
 package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
+import com.proelbtn.linesc.exceptions.ForbiddenException
+import com.proelbtn.linesc.exceptions.NotFoundException
 import com.proelbtn.linesc.request.CreateGroupRequest
 import com.proelbtn.linesc.response.GroupResponse
 import com.proelbtn.linesc.model.UserGroups
-import com.proelbtn.linesc.validator.validate_id
 import io.swagger.annotations.*
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -14,7 +15,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -32,48 +32,36 @@ class GroupsController {
     @ApiResponses(
             value = [
                 (ApiResponse( code = 200, message = "正常にグループを作成できた。")),
-                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+                (ApiResponse( code = 403, message = "既にグループが存在する。"))
             ]
     )
+    @ResponseStatus(HttpStatus.OK)
     fun createGroupsInformation(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String,
             @ApiParam(value = "作成するグループの情報") @RequestBody req: CreateGroupRequest
-                ): ResponseEntity<GroupResponse> {
-        var res: GroupResponse? = null
-        var status: HttpStatus = HttpStatus.OK
+                ): GroupResponse {
+        val id = UUID.randomUUID()
+        val sid = req.sid
+        val name = req.name
+        val owner = UUID.fromString(user)
+        val now = DateTime.now()
 
-        // validation
-        if (!req.validate()) status = HttpStatus.BAD_REQUEST
+        transaction {
+            val group = UserGroups.select { UserGroups.sid eq sid }.firstOrNull()
 
-        // operation
-        if (status == HttpStatus.OK) {
-            val id = UUID.randomUUID()
-            val sid = req.sid!!
-            val name = req.name!!
-            val owner = UUID.fromString(user)
-            val now = DateTime.now()
+            if (group != null) throw ForbiddenException()
 
-            transaction {
-                val group = UserGroups.select { UserGroups.sid eq sid }.firstOrNull()
-
-                if (group != null) status = HttpStatus.BAD_REQUEST
-                else {
-                    UserGroups.insert {
-                        it[UserGroups.id] = id
-                        it[UserGroups.sid] = sid
-                        it[UserGroups.name] = name
-                        it[UserGroups.owner] = owner
-                        it[UserGroups.createdAt] = now
-                        it[UserGroups.updatedAt] = now
-                    }
-                }
+            UserGroups.insert {
+                it[UserGroups.id] = id
+                it[UserGroups.sid] = sid
+                it[UserGroups.name] = name
+                it[UserGroups.owner] = owner
+                it[UserGroups.createdAt] = now
+                it[UserGroups.updatedAt] = now
             }
-
-            if (status == HttpStatus.OK)
-                res = GroupResponse(id, sid, name, owner, now.toString(), now.toString())
         }
 
-        return ResponseEntity(res, status)
+        return GroupResponse(id, sid, name, owner, now.toString(), now.toString())
     }
 
     @GetMapping(
@@ -87,48 +75,36 @@ class GroupsController {
     )
     @ApiResponses(
             value = [
-                (ApiResponse( code = 200, message = "正常にグループを取得できた。" )),
-                (ApiResponse( code = 400, message = "取得するグループが存在しなかった。"))
+                (ApiResponse(code = 200, message = "正常にグループを取得できた。" )),
+                (ApiResponse(code = 404, message = "取得するグループが存在しなかった。"))
             ]
     )
+    @ResponseStatus(HttpStatus.OK)
     fun getGroupInformation(
-            @ApiParam(value = "グループのID") @PathVariable("id") id: String
-                ): ResponseEntity<GroupResponse> {
-        var message: GroupResponse? = null
-        var status: HttpStatus = HttpStatus.OK
-
-        // validation
-        if (!validate_id(id)) status = HttpStatus.BAD_REQUEST
-
+            @ApiParam(value = "グループのID") @PathVariable("id") id: UUID
+                ): GroupResponse {
         // operation
-        if (status == HttpStatus.OK) {
-            val group = transaction { UserGroups.select { UserGroups.id eq UUID.fromString(id) }.firstOrNull() }
+        val group = transaction { UserGroups.select { UserGroups.id eq id }.firstOrNull() }
 
-            if (group == null) status = HttpStatus.NOT_FOUND
-            else {
-                message = GroupResponse(
-                        group[UserGroups.id],
-                        group[UserGroups.sid],
-                        group[UserGroups.name],
-                        group[UserGroups.owner],
-                        group[UserGroups.createdAt].toString(),
-                        group[UserGroups.updatedAt].toString()
-                )
-            }
-        }
+        if (group == null) throw NotFoundException()
 
-        return ResponseEntity(message, status)
+        return GroupResponse(
+                    group[UserGroups.id],
+                    group[UserGroups.sid],
+                    group[UserGroups.name],
+                    group[UserGroups.owner],
+                    group[UserGroups.createdAt].toString(),
+                    group[UserGroups.updatedAt].toString()
+            )
     }
 
     @Authentication
     @DeleteMapping(
-            value = "/groups/{id}",
-            produces = [ APPLICATION_JSON_VALUE ]
+            value = "/groups/{id}"
     )
     @ApiOperation(
             value = "グループの削除用",
-            notes = "グループを削除するのに使用するエンドポイント",
-            response = Unit::class
+            notes = "グループを削除するのに使用するエンドポイント"
     )
     @ApiResponses(
             value = [
@@ -137,21 +113,15 @@ class GroupsController {
                 (ApiResponse( code = 404, message = "削除するべきグループが存在しなかった。"))
             ]
     )
+    @ResponseStatus(HttpStatus.OK)
     fun deleteGroupInformation(
-            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String,
-            @ApiParam(value = "グループのID") @PathVariable("id") id: String
-                ): ResponseEntity<Unit> {
-        var status: HttpStatus = HttpStatus.OK
-
-        // validation
-        if (!validate_id(user) && !validate_id(id)) status = HttpStatus.BAD_REQUEST
-
+            @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
+            @ApiParam(value = "グループのID") @PathVariable("id") id: UUID
+                ) {
         val count = transaction {
-            UserGroups.deleteWhere { (UserGroups.id eq UUID.fromString(id)) and (UserGroups.owner eq UUID.fromString(user)) }
+            UserGroups.deleteWhere { (UserGroups.id eq id) and (UserGroups.owner eq user) }
         }
 
-        if (count == 0) status = HttpStatus.BAD_REQUEST
-
-        return ResponseEntity(status)
+        if (count == 0) throw NotFoundException()
     }
 }
