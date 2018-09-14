@@ -1,6 +1,6 @@
 package DataClass
 
-data class ResSearchUsers (
+data class ResGetSearchUsers (
      val created_at: String,
      val id: String,
      val name: String,

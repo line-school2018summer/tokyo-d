@@ -1,6 +1,6 @@
 package DataClass
 
-data class ResSearchGroups (
+data class ResGetSearchGroups (
         val created_at: String,
         val id: String,
         val name: String,
