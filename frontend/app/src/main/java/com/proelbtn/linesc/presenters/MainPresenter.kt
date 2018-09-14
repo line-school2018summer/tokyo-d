@@ -17,5 +17,7 @@ class MainPresenter (val view: View) {
         fun showHome()
         fun showDashboard()
         fun showNotifications()
+
+        fun navigateToChatActivity()
     }
 }

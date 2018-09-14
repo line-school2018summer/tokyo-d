@@ -56,4 +56,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         transaction.commit()
     }
 
+    override fun navigateToChatActivity() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
