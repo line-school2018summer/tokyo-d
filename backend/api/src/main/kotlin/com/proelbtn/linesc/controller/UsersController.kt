@@ -130,7 +130,7 @@ class UsersController {
     @ApiOperation(
             value = "ユーザの削除用",
             notes = "ユーザを削除するのに使用するエンドポイント",
-            response = UserResponse::class
+            response = Unit::class
     )
     @ApiResponses(
             value = [

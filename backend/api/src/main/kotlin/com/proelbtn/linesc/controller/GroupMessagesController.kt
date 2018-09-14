@@ -1,15 +1,11 @@
 package com.proelbtn.linesc.controller
 
-import com.google.common.primitives.UnsignedInteger
 import com.proelbtn.linesc.annotation.Authentication
 import com.proelbtn.linesc.model.UserGroupMessages
 import com.proelbtn.linesc.model.UserGroupRelations
-import com.proelbtn.linesc.model.UserMessages
 import com.proelbtn.linesc.request.CreateMessageRequest
 import com.proelbtn.linesc.response.MessageResponse
-import com.proelbtn.linesc.validator.validate_id
 import io.swagger.annotations.*
-import org.apache.catalina.User
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
@@ -17,7 +13,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import javax.websocket.server.PathParam
 
 @RestController
 class GroupMessagesController {
@@ -33,7 +28,7 @@ class GroupMessagesController {
     @ApiResponses(
             value = [
                 (ApiResponse(code = 200, message = "正常にグループメッセージが投稿できた。")),
-                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+                (ApiResponse(code = 400, message = "引数が足りない・正しくない。"))
            ]
     )
     fun createGroupMessage(
@@ -77,7 +72,7 @@ class GroupMessagesController {
     @ApiOperation(
             value = "グループメッセージの取得用",
             notes = "グループメッセージを取得するのに使用するエンドポイント",
-            response = Unit::class
+            response = MessageResponse::class
     )
     @ApiResponses(
             value = [

@@ -30,7 +30,7 @@ class SearchController {
     )
     @ApiResponses(
             value = [
-                (ApiResponse(code = 200, message = "正常にトークンを取得できた。" )),
+                (ApiResponse(code = 200, message = "正常にユーザを検索できた。" )),
                 (ApiResponse(code = 400, message = "引数が足りない・正しくない。" ))
             ]
     )
@@ -73,7 +73,7 @@ class SearchController {
     )
     @ApiResponses(
             value = [
-                (ApiResponse(code = 200, message = "正常にトークンを取得できた。")),
+                (ApiResponse(code = 200, message = "正常にグループを検索できた。")),
                 (ApiResponse(code = 400, message = "引数が足りない・正しくない。"))
             ]
     )

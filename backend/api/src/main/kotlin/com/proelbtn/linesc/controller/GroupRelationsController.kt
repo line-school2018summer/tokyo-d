@@ -169,7 +169,7 @@ class GroupRelationsController {
     @ApiOperation(
             value = "ユーザとグループの関係の削除用",
             notes = "ユーザとグループの関係を削除するときに使用するエンドポイント",
-            response = RelationResponse::class
+            response = Unit::class
     )
     @ApiResponses(
             value = [

@@ -81,7 +81,7 @@ class UserMessagesController {
     @ApiOperation(
             value = "ユーザメッセージの取得用",
             notes = "ユーザメッセージを取得するのに使用するエンドポイント",
-            response = Unit::class
+            response = MessageResponse::class
     )
     @ApiResponses(
             value = [

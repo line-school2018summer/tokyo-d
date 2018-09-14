@@ -13,6 +13,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -76,7 +77,19 @@ class GroupsController {
     }
 
     @GetMapping(
-            "/groups/{id}"
+            value = "/groups/{id}",
+            produces = [ APPLICATION_JSON_VALUE ]
+    )
+    @ApiOperation(
+            value = "グループの取得用",
+            notes = "グループを取得するのに使用するエンドポイント",
+            response = GroupResponse::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse( code = 200, message = "正常にグループを取得できた。" )),
+                (ApiResponse( code = 400, message = "取得するグループが存在しなかった。"))
+            ]
     )
     fun getGroupInformation(
             @ApiParam(value = "グループのID") @PathVariable("id") id: String
@@ -109,7 +122,20 @@ class GroupsController {
 
     @Authentication
     @DeleteMapping(
-            "/groups/{id}"
+            value = "/groups/{id}",
+            produces = [ APPLICATION_JSON_VALUE ]
+    )
+    @ApiOperation(
+            value = "グループの削除用",
+            notes = "グループを削除するのに使用するエンドポイント",
+            response = Unit::class
+    )
+    @ApiResponses(
+            value = [
+                (ApiResponse( code = 200, message = "正常にグループを削除できた。" )),
+                (ApiResponse( code = 400, message = "引数が足りない・正しくない。")),
+                (ApiResponse( code = 404, message = "削除するべきグループが存在しなかった。"))
+            ]
     )
     fun deleteGroupInformation(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String,
