@@ -4,29 +4,36 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
+import android.widget.TextView
 import com.proelbtn.linesc.R
-import com.proelbtn.linesc.presenters.LoginPresenter
 
-class LoginActivity : AppCompatActivity(), LoginPresenter.View {
-    val presenter = LoginPresenter(this)
+class EntryActivity : AppCompatActivity(), EntryPresenter.View {
+    val presenter = EntryPresenter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_entry)
 
         findViewById<Button>(R.id.button_login).setOnClickListener {
             presenter.onLogin()
         }
+
+        findViewById<Button>(R.id.button_signup).setOnClickListener {
+            presenter.onSignup()
+        }
+
+        presenter.onCreate()
     }
 
-    override fun getId(): String {
-        return findViewById<EditText>(R.id.text_id).text.toString()
+    override fun navigateToLoginActivity() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
     }
 
-    override fun getPassword(): String {
-        return findViewById<EditText>(R.id.text_password).text.toString()
+    override fun navigateToSignupActivity() {
+        val intent = Intent(this, SignupActivity::class.java)
+        startActivity(intent)
     }
 
     override fun navigateToMainActivity() {
