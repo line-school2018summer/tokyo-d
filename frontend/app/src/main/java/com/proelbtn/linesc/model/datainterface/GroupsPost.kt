@@ -1,8 +1,10 @@
 package com.proelbtn.linesc.model.datainterface
 
+import com.proelbtn.linesc.Constants.retrofit
 import com.proelbtn.linesc.model.dataclass.PostGroups
 import com.proelbtn.linesc.model.dataclass.ResPostGroups
 import com.proelbtn.linesc.model.dataclass.ResPostToken
+import io.reactivex.Single
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -13,17 +15,10 @@ import retrofit2.http.Part
 interface GroupsPost {
     @Multipart
     @POST("groups")
-    fun postGroups(@Part("user") user: ResPostToken, @Part("req") req: PostGroups): Call<ResPostGroups>
+    fun postGroups(@Part("user") user: ResPostToken, @Part("req") req: PostGroups): Single<ResPostGroups>
 
     companion object {
-        private const val BASE_URL = "http://ec2-52-194-219-150.ap-northeast-1.compute.amazonaws.com/api/"
-
         fun create(): GroupsPost {
-
-            val retrofit = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create())
-                    .build()
             return retrofit.create(GroupsPost::class.java)
         }
     }
