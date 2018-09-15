@@ -1,6 +1,8 @@
 package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
+import com.proelbtn.linesc.exceptions.BadRequestException
+import com.proelbtn.linesc.exceptions.ForbiddenException
 import com.proelbtn.linesc.model.UserMessages
 import com.proelbtn.linesc.model.UserRelations
 import com.proelbtn.linesc.request.CreateMessageRequest
@@ -10,10 +12,7 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import org.springframework.http.HttpStatus
@@ -38,41 +37,35 @@ class UserMessagesController {
     @ApiResponses(
             value = [
                 (ApiResponse(code = 200, message = "正常にユーザメッセージを投稿できた。")),
-                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+                (ApiResponse(code = 403, message = "友達関係がない。"))
             ]
     )
+    @ResponseStatus(HttpStatus.OK)
     fun createUserMessage(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: String,
             @ApiParam(value = "作成するユーザメッセージの情報") @RequestBody req: CreateMessageRequest
-                ): ResponseEntity<Unit> {
-        var status = HttpStatus.OK
-
-        // validation
-        if (!req.validate()) status = HttpStatus.BAD_REQUEST
-
-        val fid = UUID.fromString(req.from)
-        val tid = UUID.fromString(req.to)
+                ) {
+        val from = req.from
+        val to = req.to
 
         val rel = transaction { UserRelations.select {
-                (UserRelations.from eq fid) and (UserRelations.to eq tid)
+                (UserRelations.from eq from) and (UserRelations.to eq to)
             }.firstOrNull()
         }
-        if (rel == null) status = HttpStatus.BAD_REQUEST
 
-        // operation
-        if (status == HttpStatus.OK) {
-            val now = DateTime.now()
+        if (rel == null) throw ForbiddenException()
 
-            transaction { UserMessages.insert {
-                    it[from] = fid
-                    it[to] = tid
-                    it[content] = req.content
-                    it[createdAt] = now
-                }
+        val id = UUID.randomUUID()
+        val now = DateTime.now()
+
+        transaction { UserMessages.insert {
+                it[UserMessages.id] = id
+                it[UserMessages.from] = from
+                it[UserMessages.to] = to
+                it[UserMessages.content] = req.content
+                it[UserMessages.createdAt] = now
             }
         }
-
-        return ResponseEntity(status)
     }
 
     @Authentication
@@ -82,36 +75,68 @@ class UserMessagesController {
     @ApiOperation(
             value = "ユーザメッセージの取得用",
             notes = "ユーザメッセージを取得するのに使用するエンドポイント",
-            response = Unit::class
+            response = MessageResponse::class
     )
     @ApiResponses(
             value = [
                 (ApiResponse(code = 200, message = "正常にユーザメッセージを取得できた。"))
             ]
     )
-    fun getUserMessage(
+    @ResponseStatus(HttpStatus.OK)
+    fun getGroupMessage(
+            @ApiParam(value = "取得したいトークのユーザのID") @PathVariable("id") id: UUID,
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
-            @ApiParam(value = "送信元のユーザのID") @RequestParam("f") from: UUID,
-            @ApiParam(value = "送信先のユーザのID") @RequestParam("t") to: UUID,
-            @ApiParam(value = "この時間以降に作成されたユーザメッセージを取得する。") @RequestParam("a", required = false) after: String?
-                ): ResponseEntity<List<MessageResponse>> {
-        var status: HttpStatus = HttpStatus.OK
+            @ApiParam(value = "このメッセージID以降に送信されたメッセージを取得する", required = false) @RequestParam("since_id", required = false) sinceId: UUID?,
+            @ApiParam(value = "このメッセージID以前に送信されたメッセージを取得する", required = false) @RequestParam("max_id", required = false) maxId: UUID?,
+            @ApiParam(value = "取得するメッセージの件数（最大100件）", required = false, defaultValue = "20") @RequestParam("count", required = false, defaultValue = "20") count: Int = 20
+    ): List<MessageResponse> {
+        var response: List<MessageResponse>? = null
 
-        // operation
-        var messages = transaction { UserMessages.select {
-                (UserMessages.from eq from) and (UserMessages.to eq to)
-            }.orderBy(Pair(UserMessages.createdAt, SortOrder.DESC)).toList()
-        }
+        if (count < 0 || count > 100) throw BadRequestException()
 
-        // object mapping
-        var msg = messages.map {
-            MessageResponse (
+        val query: Query? =
+                if (sinceId == null && maxId == null) {
+                    transaction {
+                        UserMessages.selectAll()
+                                .orderBy(UserMessages.createdAt).limit(count)
+                    }
+                }
+                else if (sinceId == null && maxId != null) {
+                    transaction {
+                        val maxDate = UserMessages.select {
+                            UserMessages.id eq maxId
+                        }.firstOrNull()?.get(UserMessages.createdAt)
+
+                        if (maxDate == null) throw ForbiddenException()
+
+                        UserMessages.select {
+                            UserMessages.createdAt less maxDate
+                        }.orderBy(UserMessages.createdAt).limit(count)
+                    }
+                }
+                else if (sinceId != null && maxId == null) {
+                    transaction {
+                        val sinceDate = UserMessages.select {
+                            UserMessages.id eq sinceId
+                        }.firstOrNull()?.get(UserMessages.createdAt)
+
+                        if (sinceDate == null) throw ForbiddenException()
+
+                        UserMessages.select {
+                            UserMessages.createdAt greater sinceDate
+                        }.orderBy(UserMessages.createdAt, isAsc = true).limit(count)
+                    }
+                }
+                else throw ForbiddenException()
+
+        response = query?.map { MessageResponse(
+                it[UserMessages.id],
                 it[UserMessages.from],
                 it[UserMessages.to],
-                it[UserMessages.content]
-            )
-        }
+                it[UserMessages.content],
+                it[UserMessages.createdAt].toString()
+        ) }
 
-        return ResponseEntity(msg, status)
+        return response!!
     }
 }

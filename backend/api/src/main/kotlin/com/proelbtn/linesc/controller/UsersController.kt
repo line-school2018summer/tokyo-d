@@ -1,6 +1,9 @@
 package com.proelbtn.linesc.controller
 
 import com.proelbtn.linesc.annotation.Authentication
+import com.proelbtn.linesc.exceptions.BadRequestException
+import com.proelbtn.linesc.exceptions.ForbiddenException
+import com.proelbtn.linesc.exceptions.NotFoundException
 import com.proelbtn.linesc.model.UserGroupRelations
 import com.proelbtn.linesc.model.UserGroups
 import com.proelbtn.linesc.model.UserRelations
@@ -32,56 +35,44 @@ class UsersController {
             produces = [ APPLICATION_JSON_VALUE ]
     )
     @ApiOperation(
-            value = "ユーザの作成用",
-            notes = "ユーザを作成するのに使用するエンドポイント",
+            value = "ユーザ登録用",
+            notes = "ユーザを登録するのに使用するエンドポイント",
             response = UserResponse::class
     )
     @ApiResponses(
             value = [
-                (ApiResponse( code = 200, message = "正常にユーザを作成できた。" )),
-                (ApiResponse( code = 400, message = "引数が足りない・正しくない。"))
+                (ApiResponse(code = 200, message = "正常にユーザを登録できた。" )),
+                (ApiResponse(code = 400, message = "引数が足りない・正しくない。")),
+                (ApiResponse(code = 403, message = "既にユーザーが存在する。"))
             ]
     )
     fun createUserInformation(
             @ApiParam(value = "作成したいユーザの情報") @RequestBody req: CreateUserRequest
-                ): ResponseEntity<UserResponse> {
-        var message: UserResponse? = null
-        var status: HttpStatus = HttpStatus.OK
-
-        // validate
-        if (!req.validate()) status = HttpStatus.BAD_REQUEST
-
+                ): UserResponse {
         // operation
-        if (status == HttpStatus.OK) {
-            val id = UUID.randomUUID()
-            val sid = req.sid!!
-            val name = req.name!!
-            val pass = BCrypt.hashpw(req.pass!!, BCrypt.gensalt(8))
-            val now = DateTime.now()
+        val id = UUID.randomUUID()
+        val sid = req.sid
+        val name = req.name
+        val pass = BCrypt.hashpw(req.pass, BCrypt.gensalt(8))
+        val now = DateTime.now()
 
-            transaction {
-                // check if user is already registered
-                val user = Users.select { Users.sid eq sid }.firstOrNull()
-                if (user != null) status = HttpStatus.BAD_REQUEST
+        transaction {
+            // check if user is already registered
+            val user = Users.select { Users.sid eq sid }.firstOrNull()
 
-                // if user isn't registered, register it
-                if (status == HttpStatus.OK) {
-                    Users.insert {
-                        it[Users.id] = id
-                        it[Users.sid] = sid
-                        it[Users.name] = name
-                        it[Users.pass] = pass
-                        it[Users.createdAt] = now
-                        it[Users.updatedAt] = now
-                    }
-                }
+            if (user != null) throw ForbiddenException()
+
+            Users.insert {
+                it[Users.id] = id
+                it[Users.sid] = sid
+                it[Users.name] = name
+                it[Users.pass] = pass
+                it[Users.createdAt] = now
+                it[Users.updatedAt] = now
             }
-
-            if (status == HttpStatus.OK)
-                message = UserResponse(id, sid, name, now.toString(), now.toString())
         }
 
-        return ResponseEntity(message, status)
+        return UserResponse(id, sid, name, now.toString(), now.toString())
     }
 
     @GetMapping(
@@ -89,77 +80,65 @@ class UsersController {
             produces = [ APPLICATION_JSON_VALUE ]
     )
     @ApiOperation(
-            value = "ユーザの取得用",
-            notes = "ユーザを取得するのに使用するエンドポイント",
+            value = "ユーザ取得用",
+            notes = "IDからユーザを取得する際に使用するエンドポイント",
             response = UserResponse::class
     )
     @ApiResponses(
             value = [
-                (ApiResponse( code = 200, message = "正常にユーザを取得できた。" )),
-                (ApiResponse( code = 400, message = "取得するユーザが存在しなかった。"))
+                (ApiResponse(code = 200, message = "正常にユーザを取得できた。" )),
+                (ApiResponse(code = 404, message = "指定したIDのユーザが存在しなかった。"))
             ]
     )
+    @ResponseStatus(HttpStatus.OK)
     fun getUserInformation(
             @ApiParam(value = "ユーザのID") @PathVariable("id") id: UUID
-                ): ResponseEntity<UserResponse> {
-        var message: UserResponse? = null
-        var status: HttpStatus = HttpStatus.OK
-
+                ): UserResponse {
         // operation
         val user = transaction { Users.select { Users.id eq id }.firstOrNull() }
 
-        if (user == null) status = HttpStatus.NOT_FOUND
-        else {
-            message = UserResponse(
-                    user[Users.id],
-                    user[Users.sid],
-                    user[Users.name],
-                    user[Users.createdAt].toString(),
-                    user[Users.updatedAt].toString()
-            )
-        }
+        user ?: throw NotFoundException()
 
-        return ResponseEntity(message, status)
+        return UserResponse(
+                user[Users.id],
+                user[Users.sid],
+                user[Users.name],
+                user[Users.createdAt].toString(),
+                user[Users.updatedAt].toString()
+        )
     }
 
     @Authentication
     @DeleteMapping(
             value = "/users/{id}",
-            produces = [ APPLICATION_JSON_VALUE ]
+            produces = []
     )
     @ApiOperation(
             value = "ユーザの削除用",
-            notes = "ユーザを削除するのに使用するエンドポイント",
-            response = UserResponse::class
+            notes = "ユーザを削除するのに使用するエンドポイント"
     )
     @ApiResponses(
             value = [
-                (ApiResponse( code = 200, message = "正常にユーザを削除できた。" )),
-                (ApiResponse( code = 400, message = "引数が足りない・正しくない。")),
-                (ApiResponse( code = 404, message = "削除するべきユーザが存在しなかった。"))
+                (ApiResponse(code = 200, message = "正常にユーザを削除できた。" )),
+                (ApiResponse(code = 403, message = "削除する権限がないかユーザが存在しない。"))
             ]
     )
+    @ResponseStatus(HttpStatus.OK)
     fun deleteUserInformation(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
             @ApiParam("ユーザのID") @PathVariable("id") id: UUID
-                ): ResponseEntity<Unit> {
-        var status: HttpStatus = HttpStatus.OK
-
+                ) {
         // validation
-        if (user != id) status = HttpStatus.BAD_REQUEST
+        if (user != id) throw ForbiddenException()
 
         // operation
-        if (status == HttpStatus.OK) {
-            val count = transaction {
-                UserGroupRelations.deleteWhere { (UserGroupRelations.from eq id) or (UserGroupRelations.to eq id) }
-                UserGroups.deleteWhere { UserGroups.owner eq id }
-                UserRelations.deleteWhere { (UserRelations.from eq id) or (UserRelations.to eq id) }
-                Users.deleteWhere { Users.id eq id }
-            }
-
-            if (count == 0) status = HttpStatus.NOT_FOUND
+        val count = transaction {
+            UserGroupRelations.deleteWhere { (UserGroupRelations.from eq id) or (UserGroupRelations.to eq id) }
+            UserGroups.deleteWhere { UserGroups.owner eq id }
+            UserRelations.deleteWhere { (UserRelations.from eq id) or (UserRelations.to eq id) }
+            Users.deleteWhere { Users.id eq id }
         }
 
-        return ResponseEntity(status)
+        if (count == 0) throw ForbiddenException()
     }
 }

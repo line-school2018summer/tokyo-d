@@ -38,6 +38,7 @@ class LineScApplication {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
+                .useDefaultResponseMessages(false)
                 .apiInfo(info)
     }
 
@@ -49,7 +50,7 @@ class LineScApplication {
 
 fun main(args: Array<String>) {
     val config = HikariConfig()
-    config.jdbcUrl = "jdbc:mysql://localhost:3306/linesc?useSSL=no"
+    config.jdbcUrl = "jdbc:mysql://localhost:3306/linesc?allowPublicKeyRetrieval=true&useSSL=no"
     config.username = "root"
     config.password = "lineschool"
 

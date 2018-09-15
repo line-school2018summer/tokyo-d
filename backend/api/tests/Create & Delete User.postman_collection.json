@@ -253,7 +253,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "2bca5687-f7ab-4a93-acfc-4cfa4f9848ac",
+						"id": "59eb188f-5ba0-4f94-ab62-0ffaf83b1076",
 						"type": "text/javascript",
 						"exec": [
 							"const statusCode = 200;",
@@ -338,10 +338,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "e823fcb7-c684-4fc5-8378-abd0df88abf1",
+						"id": "756f3d50-5d7e-4e4e-91e8-bb899c9a8c58",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 400;",
+							"const statusCode = 403;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -384,34 +384,38 @@
 			"response": []
 		},
 		{
-			"name": "Get token for 'USER1' without sid Copy",
+			"name": "Create user 'USER2'",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"id": "9850cf67-bffe-4461-afd8-578cf3fcd429",
 						"type": "text/javascript",
 						"exec": [
-							""
+							"function mkseed() {",
+							"    var text = \"\";",
+							"    var possible = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for (var i = 0; i < 16; i++)",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"pm.globals.set(\"user2_sid\", mkseed());",
+							"pm.globals.set(\"user2_name\", mkseed());",
+							"pm.globals.set(\"user2_pass\", mkseed());"
 						]
 					}
 				},
 				{
 					"listen": "test",
 					"script": {
-						"id": "d12b2f38-9d21-49ed-aae5-cdabc309b050",
+						"id": "8857992f-4965-4739-95d7-38a7ff4220a1",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 400;",
-							"if (statusCode !== null) {",
-							"    pm.test(\"Status code is \" + statusCode, function () {",
-							"        pm.response.to.have.status(statusCode);",
-							"    });",
-							"}",
-							"",
-							"pm.test('the length of response is 0', function() {",
-							"    pm.expect(responseBody.length === 0).to.be.true;",
-							"});"
+							"const res = pm.response.json();",
+							"pm.globals.set(\"user2_id\", res.id);"
 						]
 					}
 				}
@@ -429,16 +433,16 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"pass\": \"{{user1_pass}}\"\n}"
+					"raw": "{\n\t\"sid\": \"{{user2_sid}}\",\n\t\"name\": \"{{user2_name}}\",\n\t\"pass\": \"{{user2_pass}}\"\n}"
 				},
 				"url": {
-					"raw": "{{SCHEME}}://{{HOST}}/token",
+					"raw": "{{SCHEME}}://{{HOST}}/users",
 					"protocol": "{{SCHEME}}",
 					"host": [
 						"{{HOST}}"
 					],
 					"path": [
-						"token"
+						"users"
 					]
 				}
 			},
@@ -521,7 +525,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "369bdff3-21eb-42f9-9175-4cb280265dcd",
+						"id": "8988d0d8-d738-48c1-9e30-11cb9c359036",
 						"type": "text/javascript",
 						"exec": [
 							"const statusCode = 400;",
@@ -582,7 +586,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "0f05d678-cafa-414d-97dc-c0f0a3645ec7",
+						"id": "b131f5bc-e4cc-49a3-9e08-dd0f86d0d580",
 						"type": "text/javascript",
 						"exec": [
 							"const statusCode = 200;",
@@ -654,9 +658,16 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "14cc30c9-1189-4cc0-b679-deef29f92d9e",
+						"id": "0515df32-ac3c-491f-98a3-dafaae339dba",
 						"type": "text/javascript",
 						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
 							"const schema = {",
 							"  \"required\": [\"token\"],",
 							"  \"properties\": {",
@@ -665,10 +676,6 @@
 							"};",
 							"",
 							"const res = JSON.parse(responseBody);",
-							"",
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
 							"",
 							"pm.test('Schema is valid', function() {",
 							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
@@ -723,9 +730,16 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "14cc30c9-1189-4cc0-b679-deef29f92d9e",
+						"id": "172a3b2d-ca62-4194-81f4-58f001741cf0",
 						"type": "text/javascript",
 						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
 							"const schema = {",
 							"  \"required\": [\"token\"],",
 							"  \"properties\": {",
@@ -734,10 +748,6 @@
 							"};",
 							"",
 							"const res = JSON.parse(responseBody);",
-							"",
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
 							"",
 							"pm.test('Schema is valid', function() {",
 							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
@@ -784,6 +794,197 @@
 			"response": []
 		},
 		{
+			"name": "Get token for 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "62b4552d-9ac0-42f9-aaf5-51584ad546e8",
+						"type": "text/javascript",
+						"exec": [
+							"const res = pm.response.json();",
+							"pm.globals.set(\"user2_token\", res.token);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{user2_sid}}\",\n\t\"pass\": \"{{user2_pass}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/token",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user 'USER2' with the credential of 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "89c50a08-4527-4094-ae85-f5b02d14d091",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 403;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/users/{{user2_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"users",
+						"{{user2_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "1bc98659-9b1e-4f38-a77c-533397a4da33",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/users/{{user2_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"users",
+						"{{user2_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Delete user 'USER1' without token",
 			"event": [
 				{
@@ -799,10 +1000,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "2878ae18-682f-4e74-bf98-bab527f971a2",
+						"id": "41c7d19f-c716-4bac-9b49-fcdbd41c8886",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 403;",
+							"const statusCode = 401;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -930,10 +1131,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "ca3f5a4a-a0bf-4567-b92f-94f30d01461d",
+						"id": "a66a7180-7243-4948-a007-4f9fb9b9ee6a",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 400;",
+							"const statusCode = 403;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",

@@ -28,7 +28,7 @@ class AuthenticationInterceptor: HandlerInterceptor{
             }
         }
 
-        if (!flag) response.status = 403
+        if (!flag) response.status = 401
 
         return flag
     }

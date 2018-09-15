@@ -33,42 +33,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "2bca5687-f7ab-4a93-acfc-4cfa4f9848ac",
+						"id": "8d083f0d-386a-47fb-8274-15dafaa03948",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 200;",
-							"if (statusCode !== null) {",
-							"    pm.test(\"Status code is \" + statusCode, function () {",
-							"        pm.response.to.have.status(statusCode);",
-							"    });",
-							"}",
-							"",
-							"const schema = {",
-							"  \"required\": [\"id\", \"sid\", \"name\", \"created_at\", \"updated_at\"],",
-							"  \"properties\": {",
-							"    \"id\": { \"type\": \"string\" },",
-							"    \"sid\": { \"type\": \"string\" },",
-							"    \"name\": { \"type\": \"string\" },",
-							"    \"created_at\": { \"type\": \"string\" },",
-							"    \"updated_at\": { \"type\": \"string\" },",
-							"  }",
-							"};",
-							"",
-							"const res = JSON.parse(responseBody);",
-							"",
-							"pm.test('Schema is valid', function() {",
-							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
-							"});",
-							"",
-							"pm.test(\"Parameter Constraints meets\", function() {",
-							"    const user1_sid = pm.globals.get(\"user1_sid\");",
-							"    const user1_name = pm.globals.get(\"user1_name\");",
-							"    ",
-							"    pm.expect(res.sid === user1_sid).to.be.true;",
-							"    pm.expect(res.name === user1_name).to.be.true;",
-							"    pm.expect(res.created_at === res.updated_at).to.be.true;",
-							"});",
-							"",
+							"const res = pm.response.json();",
 							"pm.globals.set(\"user1_id\", res.id);"
 						]
 					}
@@ -130,42 +98,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "75305891-fa3f-48e4-8712-e0b4ee644c94",
+						"id": "78ed8f9d-4cf3-431a-8044-b0d17d084cfd",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 200;",
-							"if (statusCode !== null) {",
-							"    pm.test(\"Status code is \" + statusCode, function () {",
-							"        pm.response.to.have.status(statusCode);",
-							"    });",
-							"}",
-							"",
-							"const schema = {",
-							"  \"required\": [\"id\", \"sid\", \"name\", \"created_at\", \"updated_at\"],",
-							"  \"properties\": {",
-							"    \"id\": { \"type\": \"string\" },",
-							"    \"sid\": { \"type\": \"string\" },",
-							"    \"name\": { \"type\": \"string\" },",
-							"    \"created_at\": { \"type\": \"string\" },",
-							"    \"updated_at\": { \"type\": \"string\" },",
-							"  }",
-							"};",
-							"",
-							"const res = JSON.parse(responseBody);",
-							"",
-							"pm.test('Schema is valid', function() {",
-							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
-							"});",
-							"",
-							"pm.test(\"Parameter Constraints meets\", function() {",
-							"    const user2_sid = pm.globals.get(\"user2_sid\");",
-							"    const user2_name = pm.globals.get(\"user2_name\");",
-							"    ",
-							"    pm.expect(res.sid === user2_sid).to.be.true;",
-							"    pm.expect(res.name === user2_name).to.be.true;",
-							"    pm.expect(res.created_at === res.updated_at).to.be.true;",
-							"});",
-							"",
+							"const res = pm.response.json();",
 							"pm.globals.set(\"user2_id\", res.id);"
 						]
 					}
@@ -215,29 +151,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "0f05d678-cafa-414d-97dc-c0f0a3645ec7",
+						"id": "595c3823-a3a1-4e5e-a0d3-c6f5f6a0e38a",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 200;",
-							"if (statusCode !== null) {",
-							"    pm.test(\"Status code is \" + statusCode, function () {",
-							"        pm.response.to.have.status(statusCode);",
-							"    });",
-							"}",
-							"",
-							"const schema = {",
-							"  \"required\": [\"token\"],",
-							"  \"properties\": {",
-							"    \"token\": { \"type\": \"string\" },",
-							"  }",
-							"};",
-							"",
-							"const res = JSON.parse(responseBody);",
-							"",
-							"pm.test('Schema is valid', function() {",
-							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
-							"});",
-							"",
+							"const res = pm.response.json();",
 							"pm.globals.set(\"user1_token\", res.token);"
 						]
 					}
@@ -287,29 +204,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "bc9bb57f-be60-4640-9ec4-28d8c82ae278",
+						"id": "462edc70-dd54-4e7f-942d-d2670df4cc50",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 200;",
-							"if (statusCode !== null) {",
-							"    pm.test(\"Status code is \" + statusCode, function () {",
-							"        pm.response.to.have.status(statusCode);",
-							"    });",
-							"}",
-							"",
-							"const schema = {",
-							"  \"required\": [\"token\"],",
-							"  \"properties\": {",
-							"    \"token\": { \"type\": \"string\" },",
-							"  }",
-							"};",
-							"",
-							"const res = JSON.parse(responseBody);",
-							"",
-							"pm.test('Schema is valid', function() {",
-							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
-							"});",
-							"",
+							"const res = pm.response.json();",
 							"pm.globals.set(\"user2_token\", res.token);"
 						]
 					}
@@ -370,10 +268,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "a302ef04-59fd-4e2a-bd69-93b9b77c3c63",
+						"id": "fd0d0b89-e126-41e9-95a2-8a5e82989732",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 403;",
+							"const statusCode = 401;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -600,7 +498,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "f5dba22c-8dcf-45c7-a463-dfc360ce5d22",
+						"id": "43b7070b-6e25-439c-8788-d78934c1b6bd",
 						"type": "text/javascript",
 						"exec": [
 							"const statusCode = 200;",
@@ -695,10 +593,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "251b16cd-e58d-46f4-8ff1-3aaa0c3eebe4",
+						"id": "8ee07d89-2284-4b49-a4dc-f4a3791be653",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 403;",
+							"const statusCode = 401;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -757,10 +655,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "902da55c-7b1b-4e09-ab99-a432bc691c20",
+						"id": "a1f7b5e9-76b3-484c-aa94-3dab0746fad4",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 400;",
+							"const statusCode = 403;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -826,10 +724,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "a89d3c71-b7ed-4fb7-a77f-c18431a17933",
+						"id": "c4da31d3-d076-4e2a-9457-7257f5fe2720",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 403;",
+							"const statusCode = 401;",
 							"if (statusCode !== null) {",
 							"    pm.test(\"Status code is \" + statusCode, function () {",
 							"        pm.response.to.have.status(statusCode);",
@@ -957,19 +855,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "e2743c8f-fba1-45eb-bcdd-c6c164e3e1cd",
+						"id": "5e26a1e2-9a5f-423b-ad72-88e45a578adf",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 200;",
-							"if (statusCode !== null) {",
-							"    pm.test(\"Status code is \" + statusCode, function () {",
-							"        pm.response.to.have.status(statusCode);",
-							"    });",
-							"}",
-							"",
-							"pm.test('the length of response is 0', function() {",
-							"    pm.expect(responseBody.length === 0).to.be.true;",
-							"});"
+							""
 						]
 					}
 				}
@@ -1037,46 +926,10 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "53439aa1-7380-46cf-a1bb-a6aa25bba023",
+						"id": "88050280-a05b-47ab-9adc-82829f3a0c65",
 						"type": "text/javascript",
 						"exec": [
-							"const statusCode = 200;",
-							"if (statusCode !== null) {",
-							"    pm.test(\"Status code is \" + statusCode, function () {",
-							"        pm.response.to.have.status(statusCode);",
-							"    });",
-							"}",
-							"",
-							"const schema = {",
-							"  \"required\": [\"id\", \"sid\", \"name\", \"owner\", \"created_at\", \"updated_at\"],",
-							"  \"properties\": {",
-							"    \"id\": { \"type\": \"string\" },",
-							"    \"sid\": { \"type\": \"string\" },",
-							"    \"name\": { \"type\": \"string\" },",
-							"    \"owner\": { \"type\": \"string\" },",
-							"    \"created_at\": { \"type\": \"string\" },",
-							"    \"updated_at\": { \"type\": \"string\" },",
-							"  }",
-							"};",
-							"",
-							"const res = JSON.parse(responseBody);",
-							"",
-							"pm.test('Schema is valid', function() {",
-							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
-							"});",
-							"",
-							"pm.test(\"Parameter Constraints meets\", function() {",
-							"    const user2_id = pm.globals.get(\"user2_id\");",
-							"    const group2_sid = pm.globals.get(\"group2_sid\");",
-							"    const group2_name = pm.globals.get(\"group2_name\");",
-							"    ",
-							"    pm.expect(res.sid === group2_sid).to.be.true;",
-							"    pm.expect(res.name === group2_name).to.be.true;",
-							"    pm.expect(res.owner === user2_id).to.be.true;",
-							"    pm.expect(res.created_at === res.updated_at).to.be.true;",
-							"});",
-							"",
-							"pm.globals.set(\"group2_id\", res.id);"
+							""
 						]
 					}
 				}
