@@ -9,14 +9,9 @@ class MainPresenter (val view: View) {
         view.showDashboard()
     }
 
-    fun selectNotifications() {
-        view.showNotifications()
-    }
-
     interface View {
         fun showHome()
         fun showDashboard()
-        fun showNotifications()
 
         fun navigateToChatActivity()
     }
