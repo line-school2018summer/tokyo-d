@@ -38,7 +38,6 @@ class HomeFragment : Fragment(), HomePresenter.View {
 
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(activity)
-        rv.addItemDecoration(DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL))
 
         return view
     }
