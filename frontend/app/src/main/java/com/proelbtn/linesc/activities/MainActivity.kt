@@ -2,7 +2,6 @@ package com.proelbtn.linesc.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.annotation.MainThread
 import android.support.design.widget.BottomNavigationView
 import android.util.Log
 import com.proelbtn.linesc.R
@@ -10,13 +9,10 @@ import com.proelbtn.linesc.fragments.DashboardFragment
 import com.proelbtn.linesc.fragments.HomeFragment
 import com.proelbtn.linesc.fragments.NotificationsFragment
 import com.proelbtn.linesc.model.dataclass.PostUsers
-import com.proelbtn.linesc.model.dataclass.ResPostUsers
 import com.proelbtn.linesc.model.datainterface.UsersPost
 import com.proelbtn.linesc.presenters.MainPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import retrofit2.Call
-import retrofit2.Callback
 
 class MainActivity : AppCompatActivity(), MainPresenter.View {
     val home = HomeFragment()
@@ -28,7 +24,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
-        setContentView(R.layout.main)
+        setContentView(R.layout.activity_main)
 
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.container, home)
@@ -44,15 +40,10 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
             }
             true
         }
+    }
 
-        UsersPost.create()
-                .postUsers(PostUsers("aaa", "bbb", "ccc"))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { it -> Log.d("test", it.toString())},
-                        { it -> Log.d("error", it.toString())}
-                )
+    override fun onBackPressed() {
+        moveTaskToBack(true)
     }
 
     override fun showHome() {

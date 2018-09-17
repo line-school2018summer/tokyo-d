@@ -1,7 +1,5 @@
 package com.proelbtn.linesc.fragments
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -21,6 +19,6 @@ class HomeFragment : Fragment(), HomePresenter.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.home, container, false)
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 }

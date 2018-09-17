@@ -1,18 +1,19 @@
 package com.proelbtn.linesc.presenters
 
-import com.proelbtn.linesc.model.dataclass.PostToken
-import com.proelbtn.linesc.model.datainterface.TokenPost
+import com.proelbtn.linesc.model.dataclass.PostUsers
+import com.proelbtn.linesc.model.datainterface.UsersPost
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class LoginPresenter (val view: View) {
-    fun onLogin() {
+class SignupPresenter (val view: View) {
+    fun onSignup() {
         val id = view.getId()
+        val name = view.getName()
         val pass = view.getPassword()
 
         /*
-        TokenPost.create()
-                .postToken(PostToken(id, pass))
+        UsersPost.create()
+                .postUsers(PostUsers(id, name, pass))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { it ->
@@ -24,6 +25,7 @@ class LoginPresenter (val view: View) {
 
     interface View {
         fun getId(): String
+        fun getName(): String
         fun getPassword(): String
 
         fun navigateToMainActivity()

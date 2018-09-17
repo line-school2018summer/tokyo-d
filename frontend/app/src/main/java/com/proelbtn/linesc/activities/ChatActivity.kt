@@ -10,6 +10,6 @@ class ChatActivity : AppCompatActivity(), ChatPresenter.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.chat)
+        setContentView(R.layout.activity_chat)
     }
 }
