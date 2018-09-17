@@ -14,7 +14,7 @@ import com.proelbtn.linesc.adapters.DashboardAdapter
 import com.proelbtn.linesc.presenters.DashboardPresenter
 
 class DashboardFragment : Fragment(), DashboardPresenter.View {
-    val view = DashboardPresenter(this)
+    val presenter = DashboardPresenter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +26,8 @@ class DashboardFragment : Fragment(), DashboardPresenter.View {
         val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
         val rv = view.findViewById<RecyclerView>(R.id.rv_dashboard)
+
+        presenter.onCreateView()
 
         val data = ArrayList<String>()
         data.add("Hello, World. 1")
