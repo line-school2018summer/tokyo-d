@@ -23,8 +23,8 @@ private const val TAG = "ChatActivity"
 class ChatActivity: AppCompatActivity() {
     private lateinit var adapter: MessageAdapter
 
-    private val pusherAppKey = "KEY"
-    private val pusherAppCluster = "CLUSTER"
+    private val pusherAppKey = "6792826229b059405caf"
+    private val pusherAppCluster = "ap1"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

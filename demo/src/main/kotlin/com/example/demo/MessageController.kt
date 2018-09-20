@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/message")
 class MessageController {
-    private val pusher = Pusher("APP_ID", "KEY", "SECRET")
+    private val pusher = Pusher("584320", "6792826229b059405caf", "2b1094484f0bb4018e79")
 
     init {
-        pusher.setCluster("CLUSTER")
+        pusher.setCluster("ap1")
     }
 
     @PostMapping

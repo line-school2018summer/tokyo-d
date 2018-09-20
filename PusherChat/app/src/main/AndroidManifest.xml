@@ -29,7 +29,11 @@
         <activity android:name=".RegisterActivity" />
         <activity
             android:name=".HomeActivity"
-            android:label="@string/title_activity_home"></activity>
+            android:label="@string/title_activity_home" />
+        <activity
+            android:name=".Addfriend"
+            android:label="@string/title_activity_addfriend"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
