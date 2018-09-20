@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.proelbtn.linesc.R
+import android.widget.Toast
+import android.support.design.widget.Snackbar
 
 class HomeAdapter(context: Context, data: ArrayList<String>): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
     val inflater = LayoutInflater.from(context)
@@ -28,11 +30,16 @@ class HomeAdapter(context: Context, data: ArrayList<String>): RecyclerView.Adapt
         return 0
     }
 
-    class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val nameView: TextView
 
         init {
             nameView = itemView.findViewById(R.id.friend_name)
+            nameView.setOnClickListener{ v: View ->
+                var position: Int = getAdapterPosition()
+                Snackbar.make(v, "Click detected on item $position",
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show()
+            }
         }
     }
 }
