@@ -1,0 +1,1961 @@
+{
+	"info": {
+		"_postman_id": "bc8db8a8-d984-41f9-ab05-ad4d16e03087",
+		"name": "Create & Delete UserRelations",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create user 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4fbf8146-396a-478f-b406-b400f2bf879c",
+						"type": "text/javascript",
+						"exec": [
+							"function mkseed() {",
+							"    var text = \"\";",
+							"    var possible = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for (var i = 0; i < 16; i++)",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"pm.globals.set(\"user1_sid\", mkseed());",
+							"pm.globals.set(\"user1_name\", mkseed());",
+							"pm.globals.set(\"user1_pass\", mkseed());"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ef5265bf-7168-4576-90a4-b0c6ed353284",
+						"type": "text/javascript",
+						"exec": [
+							"const res = pm.response.json();",
+							"pm.globals.set(\"user1_id\", res.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{user1_sid}}\",\n\t\"name\": \"{{user1_name}}\",\n\t\"pass\": \"{{user1_pass}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create user 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "317fcd19-8291-4ef8-ab62-f45ec75f9080",
+						"type": "text/javascript",
+						"exec": [
+							"function mkseed() {",
+							"    var text = \"\";",
+							"    var possible = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for (var i = 0; i < 16; i++)",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"pm.globals.set(\"user2_sid\", mkseed());",
+							"pm.globals.set(\"user2_name\", mkseed());",
+							"pm.globals.set(\"user2_pass\", mkseed());"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "1d15b376-fed0-485d-955a-7ab2c0194cc1",
+						"type": "text/javascript",
+						"exec": [
+							"const res = pm.response.json();",
+							"pm.globals.set(\"user2_id\", res.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{user2_sid}}\",\n\t\"name\": \"{{user2_name}}\",\n\t\"pass\": \"{{user2_pass}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get token for 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ca98473a-7c14-49b3-9cf3-cbc10fd882e8",
+						"type": "text/javascript",
+						"exec": [
+							"const res = pm.response.json();",
+							"pm.globals.set(\"user1_token\", res.token);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{user1_sid}}\",\n\t\"pass\": \"{{user1_pass}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/token",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get token for 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "7be21fe9-4d61-4642-8f86-9f7e94b6c066",
+						"type": "text/javascript",
+						"exec": [
+							"const res = pm.response.json();",
+							"pm.globals.set(\"user2_token\", res.token);"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sid\": \"{{user2_sid}}\",\n\t\"pass\": \"{{user2_pass}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/token",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create relation from 'USER1' to 'USER2' without token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e46d8e13-f14a-4ecd-b485-bd5b1dc6f73c",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 401;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create relation from 'USER1' to 'USER2' without from",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "498b810b-19ef-4094-a981-019300a01cd3",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 400;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create relation from 'USER1' to 'USER2' without to",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "eb7f7deb-9e8a-46a4-ba07-269b4b32049c",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 400;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create relation from 'USER1' to 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "0c5f3517-ca48-4c98-b822-bb4156c04b4f",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res.from === user1_id).to.be.true;",
+							"    pm.expect(res.to === user2_id).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relations as 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "f97e3531-40b9-4675-9989-95bb1af27dff",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    for (let rel of res) {",
+							"        pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res).to.have.lengthOf(1);",
+							"    pm.expect(res[0]).to.have.property('from', user1_id);",
+							"    pm.expect(res[0]).to.have.property('to', user2_id);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relations as 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "6eb29510-f56d-4189-9306-94a2a98ecebd",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    for (let rel of res) {",
+							"        pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res).to.have.lengthOf(1);",
+							"    pm.expect(res[0]).to.have.property('from', user1_id);",
+							"    pm.expect(res[0]).to.have.property('to', user2_id);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relation as 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d0228ae1-9e54-43f7-a8a8-6700fd1574f8",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res.from === user1_id).to.be.true;",
+							"    pm.expect(res.to === user2_id).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users/{{user2_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users",
+						"{{user2_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relation as 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2a69cfb3-e2e0-44a1-b023-76fdc75031f8",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res.from === user1_id).to.be.true;",
+							"    pm.expect(res.to === user2_id).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users/{{user1_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users",
+						"{{user1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create relation from 'USER2' to 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "13e8edd2-995f-4505-8f9a-683cf1ecff04",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res.from === user2_id).to.be.true;",
+							"    pm.expect(res.to === user1_id).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user2_id}}\",\n\t\"to\": \"{{user1_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relations as 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "6302c3c6-10e2-4fe5-9151-96bb00bbf76f",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    for (let rel of res) {",
+							"        pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    pm.expect(res).to.have.lengthOf(2);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relations as 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "f9c7f27e-b515-4401-ad9c-82ffc0818be9",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    for (let rel of res) {",
+							"        pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    pm.expect(res).to.have.lengthOf(2);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relation as 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "1b54eb21-d26b-4365-b9d8-521b859813f0",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res.from === user1_id).to.be.true;",
+							"    pm.expect(res.to === user2_id).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users/{{user2_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users",
+						"{{user2_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relation as 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "b7ad7a4d-8ed9-488b-b5ea-f435899c3f99",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res.from === user1_id).to.be.true;",
+							"    pm.expect(res.to === user2_id).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users/{{user1_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users",
+						"{{user1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete relation from 'USER1' to 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "27e88b3f-c86d-4422-b139-db9d5ed7efa6",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"pm.test('the length of response is 0', function() {",
+							"    pm.expect(responseBody.length === 0).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users/{{user2_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users",
+						"{{user2_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relations as 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a0ee8ea4-7f9b-42a1-a307-9035c0d8904d",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    for (let rel of res) {",
+							"        pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res).to.have.lengthOf(1);",
+							"    pm.expect(res[0]).to.have.property('from', user2_id);",
+							"    pm.expect(res[0]).to.have.property('to', user1_id);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relations as 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "60f213b5-5564-4feb-b37c-3e14ff979a4a",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    for (let rel of res) {",
+							"        pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res).to.have.lengthOf(1);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create relation from 'USER1' to 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "96e942a2-6226-4137-8c82-9b533d165bf7",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    pm.expect(tv4.validate(res, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    const user1_id = pm.globals.get(\"user1_id\");",
+							"    const user2_id = pm.globals.get(\"user2_id\");",
+							"    ",
+							"    pm.expect(res.from === user1_id).to.be.true;",
+							"    pm.expect(res.to === user2_id).to.be.true;",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relations as 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ed32951e-3c37-4460-a87a-5776af8f42f8",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    for (let rel of res) {",
+							"        pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    pm.expect(res).to.have.lengthOf(2);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user 'USER2'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "6579c675-93b7-444a-8694-17263269ca61",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/users/{{user2_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"users",
+						"{{user2_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read relations as 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "567fc067-ae62-48f4-ac81-c932d56d35d3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "c74eb7b8-87b3-41a1-bccd-70f8bd8a5188",
+						"type": "text/javascript",
+						"exec": [
+							"const statusCode = 200;",
+							"if (statusCode !== null) {",
+							"    pm.test(\"Status code is \" + statusCode, function () {",
+							"        pm.response.to.have.status(statusCode);",
+							"    });",
+							"}",
+							"",
+							"const schema = {",
+							"  \"required\": [\"from\", \"to\", \"created_at\"],",
+							"  \"properties\": {",
+							"    \"from\": { \"type\": \"string\" },",
+							"    \"to\": { \"type\": \"string\" },",
+							"    \"created_at\": { \"type\": \"string\" }",
+							"  }",
+							"};",
+							"",
+							"const res = JSON.parse(responseBody);",
+							"",
+							"pm.test('Schema is valid', function() {",
+							"    for (let rel of res) {",
+							"        pm.expect(tv4.validate(rel, schema)).to.be.true;",
+							"    }",
+							"});",
+							"",
+							"pm.test(\"Parameter Constraints meets\", function() {",
+							"    pm.expect(res).to.have.lengthOf(0);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from\": \"{{user1_id}}\",\n\t\"to\": \"{{user2_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/relations/users",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"relations",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user 'USER1'",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "65222bb2-56f5-4d8d-bf49-08c2e43e54db",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2ea8395a-f2e9-4783-937c-24e3c7bb6826",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{SCHEME}}://{{HOST}}/users/{{user1_id}}",
+					"protocol": "{{SCHEME}}",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"users",
+						"{{user1_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
