@@ -86,14 +86,32 @@ class UserRelationsController {
     fun getUserRelations(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID
                 ): RelationResponse {
-        val from = transaction { (UserRelations innerJoin Users).select {
+        val f = transaction { UserRelations.select {
                 UserRelations.from eq user
             }.toList()
         }
 
-        val to = transaction { (UserRelations innerJoin Users).select {
+        val t = transaction { UserRelations.select {
                 UserRelations.to eq user
             }.toList()
+        }
+
+        val fl: List<UUID> = f.map {
+            it[UserRelations.to]
+        }
+
+        val tl: List<UUID> = t.map {
+            it[UserRelations.from]
+        }
+
+        val from = transaction { Users.select {
+                Users.id inList fl
+            }
+        }
+
+        val to = transaction { Users.select {
+            Users.id inList tl
+            }
         }
 
         val fromres = from.map {
