@@ -106,12 +106,12 @@ class UserRelationsController {
 
         val from = transaction { Users.select {
                 Users.id inList fl
-            }
+            }.toList()
         }
 
         val to = transaction { Users.select {
             Users.id inList tl
-            }
+            }.toList()
         }
 
         val fromres = from.map {
