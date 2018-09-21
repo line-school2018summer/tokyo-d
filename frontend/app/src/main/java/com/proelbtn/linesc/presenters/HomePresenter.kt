@@ -11,7 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlin.collections.ArrayList
 
 class HomePresenter(val view: View) {
-    val data = ArrayList<String>()
+    val data = ArrayList<Pair<String, String>>()
     var adapter: HomeAdapter? = null
     var flag = false
 
@@ -24,10 +24,10 @@ class HomePresenter(val view: View) {
                             {
                                 flag = true
                                 it.from.forEach {
-                                    data.add(it.name)
+                                    data.add(Pair(it.id, it.name))
                                 }
                                 it.to.forEach {
-                                    data.add(it.name)
+                                    data.add(Pair(it.id, it.name))
                                 }
                                 adapter?.notifyDataSetChanged()
                             },
