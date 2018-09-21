@@ -35,9 +35,10 @@ class HomeAdapter(context: Context, data: ArrayList<String>): RecyclerView.Adapt
 
         init {
             nameView = itemView.findViewById(R.id.friend_name)
-            nameView.setOnClickListener{ v: View ->
-                var position: Int = getAdapterPosition()
-                Snackbar.make(v, "Click detected on item $position",
+
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                Snackbar.make(it, "Click detected on item $position",
                         Snackbar.LENGTH_LONG).setAction("Action", null).show()
             }
         }
