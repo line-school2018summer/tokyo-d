@@ -1,11 +1,17 @@
 package com.proelbtn.linesc.activities
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
+import android.support.design.widget.Snackbar
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.proelbtn.linesc.R
+import java.util.*
 
 class EntryActivity : AppCompatActivity(), EntryPresenter.View {
     val presenter = EntryPresenter(this)
@@ -26,6 +32,14 @@ class EntryActivity : AppCompatActivity(), EntryPresenter.View {
         presenter.onCreate()
     }
 
+    override fun getContext(): Context {
+        return this
+    }
+
+    override fun showMessage(msg: CharSequence, mode: Int) {
+        Toast.makeText(this, msg, mode).show()
+    }
+
     override fun navigateToLoginActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
@@ -36,7 +50,8 @@ class EntryActivity : AppCompatActivity(), EntryPresenter.View {
         startActivity(intent)
     }
 
-    override fun navigateToMainActivity() {
+    override fun navigateToMainActivity(token: String) {
+        Log.d("Token", token)
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
