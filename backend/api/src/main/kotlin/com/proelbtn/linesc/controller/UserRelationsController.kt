@@ -6,6 +6,8 @@ import com.proelbtn.linesc.exceptions.NotFoundException
 import com.proelbtn.linesc.request.CreateRelationRequest
 import com.proelbtn.linesc.response.RelationResponse
 import com.proelbtn.linesc.model.UserRelations
+import com.proelbtn.linesc.model.Users
+import com.proelbtn.linesc.response.UserResponse
 import com.proelbtn.linesc.validator.validate_id
 import io.swagger.annotations.*
 import org.jetbrains.exposed.sql.*
@@ -39,7 +41,7 @@ class UserRelationsController {
     fun createUserRelation(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
             @ApiParam(value = "作成するユーザ間の関係の情報") @RequestBody req: CreateRelationRequest
-                ): RelationResponse {
+                ): RelationResponse? {
         var res: RelationResponse? = null
 
         // validation
@@ -63,7 +65,7 @@ class UserRelationsController {
             }
         }
 
-        return RelationResponse(from, to, now.toString())
+        return null // RelationResponse(from, to, now.toString())
     }
 
     @Authentication
@@ -83,21 +85,41 @@ class UserRelationsController {
     @ResponseStatus(HttpStatus.OK)
     fun getUserRelations(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID
-                ): List<RelationResponse> {
-        val rels = transaction { UserRelations.select {
-                (UserRelations.from eq user) or (UserRelations.to eq user)
+                ): RelationResponse {
+        val from = transaction { (UserRelations innerJoin Users).select {
+                UserRelations.from eq user
             }.toList()
         }
 
-        val res = rels.map { RelationResponse(
-                it[UserRelations.from],
-                it[UserRelations.to],
-                it[UserRelations.createdAt].toString()
-        ) }
+        val to = transaction { (UserRelations innerJoin Users).select {
+                UserRelations.to eq user
+            }.toList()
+        }
 
-        return res
+        val fromres = from.map {
+            UserResponse (
+                    it[Users.id],
+                    it[Users.sid],
+                    it[Users.name],
+                    it[Users.createdAt].toString(),
+                    it[Users.updatedAt].toString()
+            )
+        }
+
+        val tores = to.map {
+            UserResponse (
+                    it[Users.id],
+                    it[Users.sid],
+                    it[Users.name],
+                    it[Users.createdAt].toString(),
+                    it[Users.updatedAt].toString()
+            )
+        }
+
+        return RelationResponse(fromres, tores)
     }
 
+    /*
     @Authentication
     @GetMapping(
             "/relations/users/{id}"
@@ -117,7 +139,7 @@ class UserRelationsController {
     fun getUserRelation(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
             @ApiParam(value = "関係先のユーザのID") @PathVariable("id") id: UUID
-                ): List<RelationResponse> {
+                ): {
         val query = transaction { UserRelations.select {
             ((UserRelations.from eq user) and (UserRelations.to eq id)) or ((UserRelations.from eq id) and (UserRelations.to eq user))
             }
@@ -132,6 +154,7 @@ class UserRelationsController {
         }
     }
 
+*/
 
     @Authentication
     @DeleteMapping(
