@@ -1,5 +1,6 @@
 package com.proelbtn.linesc.activities
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -21,6 +22,10 @@ class SignupActivity : AppCompatActivity(), SignupPresenter.View {
         }
     }
 
+    override fun getContext(): Context {
+        return this
+    }
+
     override fun getId(): String {
         return findViewById<EditText>(R.id.text_id).text.toString()
     }
@@ -33,8 +38,8 @@ class SignupActivity : AppCompatActivity(), SignupPresenter.View {
         return findViewById<EditText>(R.id.text_password).text.toString()
     }
 
-    override fun navigateToMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
+    override fun navigateToEntryActivity() {
+        val intent = Intent(this, EntryActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }

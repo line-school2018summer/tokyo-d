@@ -1,5 +1,6 @@
 package com.proelbtn.linesc.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -12,13 +13,20 @@ import android.view.ViewGroup
 import com.proelbtn.linesc.R
 import com.proelbtn.linesc.adapters.DashboardAdapter
 import com.proelbtn.linesc.presenters.DashboardPresenter
+import com.proelbtn.linesc.presenters.HomePresenter
+import com.proelbtn.linesc.presenters.MainPresenter
 
 class DashboardFragment : Fragment(), DashboardPresenter.View {
-    val presenter = DashboardPresenter(this)
+    var listener: Listener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is Listener) listener = context
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -26,8 +34,6 @@ class DashboardFragment : Fragment(), DashboardPresenter.View {
         val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
         val rv = view.findViewById<RecyclerView>(R.id.rv_dashboard)
-
-        presenter.onCreateView()
 
         val data = ArrayList<String>()
         data.add("Hello, World. 1")
@@ -38,8 +44,11 @@ class DashboardFragment : Fragment(), DashboardPresenter.View {
 
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(activity)
-        rv.addItemDecoration(DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL))
 
         return view
+    }
+
+    interface Listener {
+        fun onSelectUser(id: String)
     }
 }

@@ -1,5 +1,6 @@
 package com.proelbtn.linesc.activities
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -21,8 +22,12 @@ class LoginActivity : AppCompatActivity(), LoginPresenter.View {
         }
     }
 
-    override fun getId(): String {
-        return findViewById<EditText>(R.id.text_id).text.toString()
+    override fun getContext(): Context {
+        return this
+    }
+
+    override fun getSid(): String {
+        return findViewById<EditText>(R.id.text_sid).text.toString()
     }
 
     override fun getPassword(): String {

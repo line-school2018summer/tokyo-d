@@ -1,18 +1,29 @@
 package com.proelbtn.linesc.presenters
 
-class MainPresenter (val view: View) {
-    fun selectHome() {
+import android.content.Intent
+import com.proelbtn.linesc.adapters.HomeAdapter
+
+class MainPresenter (val view: View): HomeAdapter.Listener {
+    fun onSelectUser(id: String) {
+        view.navigateToChatActivity(id)
+    }
+
+    fun onSelectHome() {
         view.showHome()
     }
 
-    fun selectDashboard() {
+    fun onSelectDashboard() {
         view.showDashboard()
     }
 
+    override fun onClicked(id: String) {
+    }
+
     interface View {
+        fun onSelectUser(id: String)
         fun showHome()
         fun showDashboard()
 
-        fun navigateToChatActivity()
+        fun navigateToChatActivity(id: String)
     }
 }
