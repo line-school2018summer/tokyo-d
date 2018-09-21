@@ -39,7 +39,7 @@ class GroupRelationsController {
     fun createGroupRelation(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
             @ApiParam(value = "作成するユーザとグループの関係の情報") @RequestBody req: CreateRelationRequest
-                ): RelationResponse {
+                ): RelationResponse? {
         val fid = req.from
         val tid = req.to
         val now = DateTime.now()
@@ -58,7 +58,7 @@ class GroupRelationsController {
             }
         }
 
-        return RelationResponse(req.from, req.to, now.toString())
+        return null //RelationResponse(req.from, req.to, now.toString())
 
     }
 
@@ -79,14 +79,16 @@ class GroupRelationsController {
     @ResponseStatus(HttpStatus.OK)
     fun getGroupRelations(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID
-                ): List<RelationResponse> {
+                ): List<RelationResponse>? {
         val rels = transaction { UserGroupRelations.select { UserGroupRelations.from eq user }.toList() }
 
-        return rels.map { RelationResponse(
+        return null
+
+        /*rels.map { RelationResponse(
                 it[UserGroupRelations.from],
                 it[UserGroupRelations.to],
                 it[UserGroupRelations.createdAt].toString()
-        ) }
+        ) }*/
 
     }
 
@@ -109,7 +111,7 @@ class GroupRelationsController {
     fun getGroupRelation(
             @ApiParam(value = "認証されたユーザのID（トークンに含まれる）") @RequestAttribute("user") user: UUID,
             @ApiParam(value = "関係先のグループのID") @PathVariable("id") id: UUID
-                ): RelationResponse {
+                ): RelationResponse? {
         val rel = transaction { UserGroupRelations.select {
                 (UserGroupRelations.from eq user) and (UserGroupRelations.to eq id)
             }.firstOrNull()
@@ -117,11 +119,11 @@ class GroupRelationsController {
 
         if (rel == null) throw NotFoundException()
 
-        return RelationResponse(
+        return null /*RelationResponse(
                 rel[UserGroupRelations.from],
                 rel[UserGroupRelations.to],
                 rel[UserGroupRelations.createdAt].toString()
-        )
+        )*/
     }
 
     @Authentication
