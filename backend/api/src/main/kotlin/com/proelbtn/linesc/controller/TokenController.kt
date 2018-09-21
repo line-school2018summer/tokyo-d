@@ -56,7 +56,7 @@ class TokenController {
 
             val jedis = Jedis("localhost")
             jedis.set(token, user[Users.id].toString())
-            jedis.expire(token, 300)
+            jedis.expire(token, 1800)
         }
 
         return TokenResponse(token)
