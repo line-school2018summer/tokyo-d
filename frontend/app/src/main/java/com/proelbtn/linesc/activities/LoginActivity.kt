@@ -1,5 +1,6 @@
 package com.proelbtn.linesc.activities
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -19,6 +20,10 @@ class LoginActivity : AppCompatActivity(), LoginPresenter.View {
         findViewById<Button>(R.id.button_login).setOnClickListener {
             presenter.onLogin()
         }
+    }
+
+    override fun getContext(): Context {
+        return this
     }
 
     override fun getId(): String {
