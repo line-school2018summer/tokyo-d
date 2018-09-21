@@ -2,8 +2,8 @@ package com.proelbtn.linesc.presenters
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import com.proelbtn.linesc.model.dataclass.PostUsers
-import com.proelbtn.linesc.model.datainterface.UsersPost
+import com.proelbtn.linesc.models.dataclass.PostUsers
+import com.proelbtn.linesc.models.datainterface.UsersPost
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 

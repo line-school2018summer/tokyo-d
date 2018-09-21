@@ -26,8 +26,8 @@ class LoginActivity : AppCompatActivity(), LoginPresenter.View {
         return this
     }
 
-    override fun getId(): String {
-        return findViewById<EditText>(R.id.text_id).text.toString()
+    override fun getSid(): String {
+        return findViewById<EditText>(R.id.text_sid).text.toString()
     }
 
     override fun getPassword(): String {

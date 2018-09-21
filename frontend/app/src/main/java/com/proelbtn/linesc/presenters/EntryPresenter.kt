@@ -2,19 +2,21 @@ package com.proelbtn.linesc.activities
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.util.Log
 import android.widget.Toast.LENGTH_SHORT
-import com.proelbtn.linesc.model.dataclass.PostToken
-import com.proelbtn.linesc.model.datainterface.TokenPost
+import com.proelbtn.linesc.managers.DataManager
+import com.proelbtn.linesc.models.dataclass.PostToken
+import com.proelbtn.linesc.models.datainterface.TokenPost
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 
 class EntryPresenter (val view: View) {
     fun onCreate() {
-        val pref = view.getContext().getSharedPreferences("keystore", MODE_PRIVATE)
+        val sid = DataManager.getSid()
+        val pass = DataManager.getPass()
 
-        val sid = pref.getString("sid", null)
-        val pass = pref.getString("pass", null)
+        Log.d("test3", sid.toString())
+        Log.d("test3", pass.toString())
 
         if (sid != null && pass != null) {
             TokenPost.create()
@@ -23,11 +25,13 @@ class EntryPresenter (val view: View) {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe (
                             {
-                                view.navigateToMainActivity(it.token)
+                                DataManager.setToken(it.token)
+                                view.navigateToMainActivity()
                             },
                             {
                                 view.showMessage("Couldn't Log in...", LENGTH_SHORT)
-                                pref.edit().remove("sid").remove("pass").apply()
+                                DataManager.removeSid()
+                                DataManager.removePass()
                             }
                     )
         }
@@ -48,6 +52,6 @@ class EntryPresenter (val view: View) {
 
         fun navigateToLoginActivity()
         fun navigateToSignupActivity()
-        fun navigateToMainActivity(token: String)
+        fun navigateToMainActivity()
     }
 }

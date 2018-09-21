@@ -50,8 +50,7 @@ class EntryActivity : AppCompatActivity(), EntryPresenter.View {
         startActivity(intent)
     }
 
-    override fun navigateToMainActivity(token: String) {
-        Log.d("Token", token)
+    override fun navigateToMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)

@@ -10,7 +10,7 @@ import com.proelbtn.linesc.R
 import android.widget.Toast
 import android.support.design.widget.Snackbar
 
-class HomeAdapter(context: Context, data: ArrayList<String>): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
+class HomeAdapter(context: Context, data: ArrayList<Pair<String, String>>): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
     val inflater = LayoutInflater.from(context)
     val data = data
 
@@ -23,7 +23,7 @@ class HomeAdapter(context: Context, data: ArrayList<String>): RecyclerView.Adapt
     }
 
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
-        p0.nameView.text = data[p1]
+        p0.nameView.text = data[p1].first
     }
 
     override fun getItemViewType(position: Int): Int {

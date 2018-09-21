@@ -8,7 +8,12 @@ import com.proelbtn.linesc.fragments.DashboardFragment
 import com.proelbtn.linesc.fragments.HomeFragment
 import com.proelbtn.linesc.presenters.MainPresenter
 
-class MainActivity : AppCompatActivity(), MainPresenter.View {
+class MainActivity : AppCompatActivity(),
+        MainPresenter.View,
+        HomeFragment.Listener,
+        DashboardFragment.Listener {
+
+
     val home = HomeFragment()
     val dashboard = DashboardFragment()
 
@@ -19,6 +24,8 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_main)
 
+
+
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.container, home)
         transaction.add(R.id.container, dashboard)
@@ -26,8 +33,8 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
 
         findViewById<BottomNavigationView>(R.id.nav_view).setOnNavigationItemSelectedListener {
             when {
-                it.itemId == R.id.navigation_home -> presenter.selectHome()
-                it.itemId == R.id.navigation_dashboard -> presenter.selectDashboard()
+                it.itemId == R.id.navigation_home -> presenter.onSelectHome()
+                it.itemId == R.id.navigation_dashboard -> presenter.onSelectDashboard()
             }
             true
         }
@@ -35,6 +42,10 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
 
     override fun onBackPressed() {
         moveTaskToBack(true)
+    }
+
+    override fun onSelectUser(id: String) {
+        presenter.onSelectUser(id)
     }
 
     override fun showHome() {
@@ -49,7 +60,7 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         transaction.commit()
     }
 
-    override fun navigateToChatActivity() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun navigateToChatActivity(id: String) {
+
     }
 }
