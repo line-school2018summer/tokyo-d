@@ -4,7 +4,6 @@ class HomePresenter(val view: View) {
     fun onCreateView() {
 
     }
-
     interface View {
 
     }
