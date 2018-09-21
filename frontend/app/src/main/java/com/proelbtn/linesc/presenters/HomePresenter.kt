@@ -10,7 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlin.collections.ArrayList
 
-class HomePresenter(val view: View) {
+class HomePresenter(val view: View): HomeAdapter.Listener {
     val data = ArrayList<Pair<String, String>>()
     var adapter: HomeAdapter? = null
     var flag = false
@@ -40,10 +40,14 @@ class HomePresenter(val view: View) {
 
     fun onStart() {
         val rv = view.getRecyclerView()!!
-        adapter = HomeAdapter(view.getContext()!!, data)
+        adapter = HomeAdapter(view.getContext()!!, data, this)
 
         rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(view.getContext()!!)
+    }
+
+    override fun onClicked(id: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     interface View {

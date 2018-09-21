@@ -10,9 +10,10 @@ import com.proelbtn.linesc.R
 import android.widget.Toast
 import android.support.design.widget.Snackbar
 
-class HomeAdapter(context: Context, data: ArrayList<Pair<String, String>>): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
+class HomeAdapter(context: Context, data: ArrayList<Pair<String, String>>, listener: Listener): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
     val inflater = LayoutInflater.from(context)
     val data = data
+    val listener = listener
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         return ViewHolder(inflater.inflate(R.layout.cell_home, p0, false))
@@ -37,10 +38,17 @@ class HomeAdapter(context: Context, data: ArrayList<Pair<String, String>>): Recy
 
         init {
             itemView.setOnClickListener {
+                listener.onClicked(data[adapterPosition].first)
+                /*
                 val position = adapterPosition
                 Snackbar.make(it, "Click detected on item $position",
                         Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                        */
             }
         }
+    }
+
+    interface Listener {
+        fun onClicked(id: String)
     }
 }
