@@ -1,15 +1,15 @@
 package com.proelbtn.linesc.presenters
 
 import android.content.Context
-import com.proelbtn.linesc.managers.DataManager
+import com.proelbtn.linesc.managers.StoredDataManager
 
 class LoginPresenter (val view: View) {
     fun onLogin() {
         val sid = view.getSid()
         val pass = view.getPassword()
 
-        DataManager.setSid(sid)
-        DataManager.setPass(pass)
+        StoredDataManager.setSid(sid)
+        StoredDataManager.setPass(pass)
 
         view.navigateToMainActivity()
     }

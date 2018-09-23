@@ -1,6 +1,6 @@
-package com.proelbtn.linesc.models.Responses
+package com.proelbtn.linesc.models
 
-data class UserResponse (
+data class User (
         val id: String,
         val sid: String,
         val name: String,

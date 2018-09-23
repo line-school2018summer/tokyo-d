@@ -2,6 +2,7 @@ package com.proelbtn.linesc.presenters
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import com.proelbtn.linesc.managers.StoredDataManager
 import com.proelbtn.linesc.models.dataclass.PostUsers
 import com.proelbtn.linesc.models.datainterface.UsersPost
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,13 +20,8 @@ class SignupPresenter (val view: View) {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe (
                         {
-                            val pref = view.getContext().getSharedPreferences("keystore", MODE_PRIVATE)
-
-                            pref.edit()
-                                    .putString("sid", it.sid)
-                                    .putString("pass", view.getPassword())
-                                    .apply()
-
+                            StoredDataManager.setSid(it.sid)
+                            StoredDataManager.setPass(view.getPassword())
 
                             view.navigateToEntryActivity()
                         },

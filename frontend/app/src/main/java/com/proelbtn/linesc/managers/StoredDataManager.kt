@@ -6,16 +6,7 @@ import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class DataManager: Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        Log.d("test2", getToken())
-        val req = chain.request()
-
-        return chain.proceed(req.newBuilder()
-                .addHeader("Authorization", "Bearer " + getToken())
-                .build())
-    }
-
+class StoredDataManager {
     companion object {
         fun getId(): String? {
             val pref = ContextManager.getContext()!!.getSharedPreferences("sp", MODE_PRIVATE)
