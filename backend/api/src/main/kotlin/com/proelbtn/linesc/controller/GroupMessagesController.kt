@@ -85,14 +85,16 @@ class GroupMessagesController {
         val query: Query? =
                 if (sinceId == null && maxId == null) {
                     transaction {
-                        UserGroupMessages.selectAll()
-                                .orderBy(UserGroupMessages.createdAt).limit(count)
+                        UserGroupMessages.select {
+                            (UserGroupMessages.to eq id)
+                        }.orderBy(UserGroupMessages.createdAt).limit(count)
                     }
                 }
                 else if (sinceId == null && maxId != null) {
                     transaction {
                         val maxDate = UserGroupMessages.select {
-                            UserGroupMessages.id eq maxId
+                            (UserGroupMessages.to eq id) and
+                                    (UserGroupMessages.id eq maxId)
                         }.firstOrNull()?.get(UserGroupMessages.createdAt)
 
                         if (maxDate == null) throw ForbiddenException()
@@ -105,7 +107,8 @@ class GroupMessagesController {
                 else if (sinceId != null && maxId == null) {
                     transaction {
                         val sinceDate = UserGroupMessages.select {
-                            UserGroupMessages.id eq sinceId
+                            (UserGroupMessages.to eq id) and
+                                    (UserGroupMessages.id eq sinceId)
                         }.firstOrNull()?.get(UserGroupMessages.createdAt)
 
                         if (sinceDate == null) throw ForbiddenException()

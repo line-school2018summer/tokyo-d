@@ -97,14 +97,18 @@ class UserMessagesController {
         val query =
                 if (sinceId == null && maxId == null) {
                     transaction {
-                        UserMessages.selectAll()
-                                .orderBy(UserMessages.createdAt).limit(count).toList()
+                        UserMessages.select {
+                            ((UserMessages.from eq id) and (UserMessages.to eq user)) or
+                            ((UserMessages.from eq user) and (UserMessages.to eq id))
+                        }.orderBy(UserMessages.createdAt).limit(count).toList()
                     }
                 }
                 else if (sinceId == null && maxId != null) {
                     transaction {
                         val maxDate = UserMessages.select {
-                            UserMessages.id eq maxId
+                            (((UserMessages.from eq id) and (UserMessages.to eq user)) or
+                                    ((UserMessages.from eq user) and (UserMessages.to eq id))) and
+                                    (UserMessages.id eq maxId)
                         }.firstOrNull()?.get(UserMessages.createdAt)
 
                         if (maxDate == null) throw ForbiddenException()
@@ -117,7 +121,9 @@ class UserMessagesController {
                 else if (sinceId != null && maxId == null) {
                     transaction {
                         val sinceDate = UserMessages.select {
-                            UserMessages.id eq sinceId
+                            (((UserMessages.from eq id) and (UserMessages.to eq user)) or
+                                    ((UserMessages.from eq user) and (UserMessages.to eq id))) and
+                                    (UserMessages.id eq sinceId)
                         }.firstOrNull()?.get(UserMessages.createdAt)
 
                         if (sinceDate == null) throw ForbiddenException()
