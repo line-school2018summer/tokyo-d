@@ -1,8 +1,7 @@
 package com.proelbtn.linesc.models.datainterface
 
 import com.proelbtn.linesc.Constants.authedRetrofit
-import com.proelbtn.linesc.models.Responses.RelationResponse
-import com.proelbtn.linesc.models.dataclass.UserRelation
+import com.proelbtn.linesc.models.responses.RelationResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 

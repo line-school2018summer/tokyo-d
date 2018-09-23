@@ -70,7 +70,7 @@ class UserMessagesController {
 
     @Authentication
     @GetMapping(
-            "/messages/users"
+            "/messages/users/{id}"
     )
     @ApiOperation(
             value = "ユーザメッセージの取得用",
@@ -94,11 +94,11 @@ class UserMessagesController {
 
         if (count < 0 || count > 100) throw BadRequestException()
 
-        val query: Query? =
+        val query =
                 if (sinceId == null && maxId == null) {
                     transaction {
                         UserMessages.selectAll()
-                                .orderBy(UserMessages.createdAt).limit(count)
+                                .orderBy(UserMessages.createdAt).limit(count).toList()
                     }
                 }
                 else if (sinceId == null && maxId != null) {
@@ -111,7 +111,7 @@ class UserMessagesController {
 
                         UserMessages.select {
                             UserMessages.createdAt less maxDate
-                        }.orderBy(UserMessages.createdAt).limit(count)
+                        }.orderBy(UserMessages.createdAt).limit(count).toList()
                     }
                 }
                 else if (sinceId != null && maxId == null) {
@@ -124,12 +124,12 @@ class UserMessagesController {
 
                         UserMessages.select {
                             UserMessages.createdAt greater sinceDate
-                        }.orderBy(UserMessages.createdAt, isAsc = true).limit(count)
+                        }.orderBy(UserMessages.createdAt, isAsc = true).limit(count).toList()
                     }
                 }
                 else throw ForbiddenException()
 
-        response = query?.map { MessageResponse(
+        response = query.map { MessageResponse(
                 it[UserMessages.id],
                 it[UserMessages.from],
                 it[UserMessages.to],
@@ -137,6 +137,6 @@ class UserMessagesController {
                 it[UserMessages.createdAt].toString()
         ) }
 
-        return response!!
+        return response
     }
 }

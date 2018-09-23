@@ -7,25 +7,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.proelbtn.linesc.R
-import android.widget.Toast
-import android.support.design.widget.Snackbar
+import com.proelbtn.linesc.models.containers.HomeAdapterDataContainer
 
-class HomeAdapter(context: Context, data: ArrayList<Pair<String, String>>, listener: Listener): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
+class HomeAdapter(context: Context): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
     val inflater = LayoutInflater.from(context)
-    val data = data
-    val listener = listener
+    var listener: Listener? = null
+
+    var data: HomeAdapterDataContainer? = null
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         return ViewHolder(inflater.inflate(R.layout.cell_home, p0, false))
     }
 
     override fun getItemCount(): Int {
-        return data.size
+        return data?.getItemCount() ?: 0
     }
 
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
-        p0.idView.text = data[p1].first
-        p0.nameView.text = data[p1].second
+        val uid = data?.getKeys()?.sorted()?.get(p1)
+
+        if (uid != null) {
+            p0.idView.text = data?.getUserFromId(uid)?.id
+            p0.nameView.text = data?.getUserFromId(uid)?.name
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -38,17 +42,14 @@ class HomeAdapter(context: Context, data: ArrayList<Pair<String, String>>, liste
 
         init {
             itemView.setOnClickListener {
-                listener.onClicked(data[adapterPosition].first)
-                /*
-                val position = adapterPosition
-                Snackbar.make(it, "Click detected on item $position",
-                        Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                        */
+                val uid = data?.getKeys()?.sorted()?.get(adapterPosition)
+
+                listener?.onItemClicked(uid!!)
             }
         }
     }
 
     interface Listener {
-        fun onClicked(id: String)
+        fun onItemClicked(uid: String)
     }
 }
