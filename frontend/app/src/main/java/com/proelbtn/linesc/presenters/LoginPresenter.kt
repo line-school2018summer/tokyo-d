@@ -25,7 +25,7 @@ class LoginPresenter (val view: View) {
                                 StoredDataManager.setSid(sid)
                                 StoredDataManager.setPass(pass)
 
-                                view.navigateToMainActivity()
+                                view.navigateToEntryActivity()
                             },
                             {
                                 Toast.makeText(view.getContext(),"Username or Password is wrong", Toast.LENGTH_SHORT).show()
@@ -39,6 +39,6 @@ class LoginPresenter (val view: View) {
         fun getSid(): String
         fun getPassword(): String
 
-        fun navigateToMainActivity()
+        fun navigateToEntryActivity()
     }
 }
