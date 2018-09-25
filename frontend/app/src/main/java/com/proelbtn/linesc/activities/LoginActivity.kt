@@ -38,8 +38,8 @@ class LoginActivity : AppCompatActivity(), LoginPresenter.View {
         return findViewById<EditText>(R.id.text_password).text.toString()
     }
 
-    override fun navigateToMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
+    override fun navigateToEntryActivity() {
+        val intent = Intent(this, EntryActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
