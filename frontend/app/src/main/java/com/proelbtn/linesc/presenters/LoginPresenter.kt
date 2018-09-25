@@ -14,23 +14,10 @@ class LoginPresenter (val view: View) {
 
         if (sid.isEmpty() or pass.isEmpty()) {
             Toast.makeText(view.getContext(),"Username and Password should not be empty", Toast.LENGTH_SHORT).show()
-
         } else {
-            SearchUsersGet.create()
-                    .getSearchUsers(sid)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe (
-                            {
-                                StoredDataManager.setSid(sid)
-                                StoredDataManager.setPass(pass)
-
-                                view.navigateToEntryActivity()
-                            },
-                            {
-                                Toast.makeText(view.getContext(),"Username or Password is wrong", Toast.LENGTH_SHORT).show()
-                            }
-                    )
+            StoredDataManager.setSid(sid)
+            StoredDataManager.setPass(pass)
+            view.navigateToEntryActivity()
         }
     }
 
